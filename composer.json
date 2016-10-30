@@ -1,0 +1,27 @@
+{
+    "name": "vccw-team/wordpress-extension",
+    "description": "WordPress extension for the Behat",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Takayuki Miyauchi",
+            "email": "miya0001@users.noreply.github.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "behat/behat": "3.*@stable",
+        "behat/mink": "1.6.*@dev",
+        "behat/mink-extension": "2.*@dev",
+        "behat/mink-browserkit-driver": "*@dev",
+        "behat/mink-goutte-driver": "*@dev",
+        "behat/mink-selenium2-driver": "*@dev"
+    },
+    "autoload": {
+      "psr-4": {
+        "VCCW/WordPressExtension": "src"
+      },
+      "files": [ "vendor/phpunit/phpunit/src/Framework/Assert/Functions.php" ]
+    }
+}
