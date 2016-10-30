@@ -1,6 +1,6 @@
 <?php
 
-namespace VCCW\WordPressExtension\Context;
+namespace VCCW\Mink\WordPressExtension;
 
 use Behat\Mink\Driver\Selenium2Driver;
 use Behat\Behat\Hook\Scope\AfterStepScope;
@@ -9,7 +9,7 @@ use Behat\MinkExtension\Context\RawMinkContext;
 /**
  * Features context.
  */
-class WordPressContext extends RawMinkContext
+class Context extends RawMinkContext
 {
 	/**
 	 * Initializes context.
@@ -131,7 +131,7 @@ class WordPressContext extends RawMinkContext
 			if (!($driver instanceof Selenium2Driver)) {
 				return;
 			}
-			file_put_contents( '/tmp/test.png', $this->getSession()->getDriver()->getScreenshot() );
+			file_put_contents('/tmp/test.png', $this->getSession()->getDriver()->getScreenshot());
 		}
 	}
 }
