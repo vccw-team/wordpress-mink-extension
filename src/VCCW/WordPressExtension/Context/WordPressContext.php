@@ -1,5 +1,7 @@
 <?php
 
+namespace VCCW\WordPressExtension\Context;
+
 use Behat\Mink\Driver\Selenium2Driver;
 use Behat\Behat\Hook\Scope\AfterStepScope;
 use Behat\MinkExtension\Context\RawMinkContext;
@@ -7,7 +9,7 @@ use Behat\MinkExtension\Context\RawMinkContext;
 /**
  * Features context.
  */
-class FeatureContext extends RawMinkContext
+class WordPressContext extends RawMinkContext
 {
 	/**
 	 * Initializes context.

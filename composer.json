@@ -20,7 +20,7 @@
     },
     "autoload": {
       "psr-4": {
-        "VCCW/WordPressExtension": "src"
+        "VCCW": "src/"
       },
       "files": [ "vendor/phpunit/phpunit/src/Framework/Assert/Functions.php" ]
     }
