@@ -21,7 +21,6 @@
     "autoload": {
       "psr-4": {
         "VCCW\\Mink\\WordPressExtension\\": "src/"
-      },
-      "files": [ "vendor/phpunit/phpunit/src/Framework/Assert/Functions.php" ]
+      }
     }
 }
