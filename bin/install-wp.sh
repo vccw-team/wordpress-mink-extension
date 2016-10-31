@@ -38,10 +38,10 @@ bin/wp core install \
 --admin_password="admin" \
 --admin_email="admin@example.com"
 
-bin/wp rewrite structure "/archives/%post_id%" --path=$WP_PATH \
+bin/wp rewrite structure "/archives/%post_id%" --path=$WP_PATH
 
-bin/wp option update blogname "$WP_TITLE" --path=$WP_PATH \
-bin/wp option update blogdescription "$WP_DESC" --path=$WP_PATH \
+bin/wp option update blogname "$WP_TITLE" --path=$WP_PATH
+bin/wp option update blogdescription "$WP_DESC" --path=$WP_PATH
 
 if [ -e "provision-post.sh" ]; then
     bash provision-post.sh
