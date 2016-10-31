@@ -5,8 +5,9 @@ php:
 - '5.6'
 
 env:
-  - WP_PATH=/tmp/wordpress
-  - PORT=8080
+  global:
+    - WP_PATH=/tmp/wordpress
+    - PORT=8080
 
 before_install:
   - composer install
