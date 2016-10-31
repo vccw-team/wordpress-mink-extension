@@ -2,8 +2,6 @@
 
 [![Build Status](https://travis-ci.org/vccw-team/wordpress-extension.svg?branch=master)](https://travis-ci.org/vccw-team/wordpress-extension)
 
-BDD testing extension for the WordPress
-
 ## Getting Started
 
 The recomended way to install is by using Composer.
@@ -37,6 +35,10 @@ default:
           selenium2:
             wd_host: http://127.0.0.1:4444/wd/hub
 ```
+
+Example `*.feature` are in the following.
+
+https://github.com/vccw-team/wordpress-extension/tree/master/features
 
 ## Contributing
 
