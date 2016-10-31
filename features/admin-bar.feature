@@ -17,7 +17,7 @@ Feature: Admin bar
     Then I should see "Howdy,"
 
     When I hover over the "#wp-admin-bar-my-account" element
-    And I wait for 1 seconds
+    And I wait for a second
     Then I should see "Edit My Profile"
     And I should see "Log Out"
 
