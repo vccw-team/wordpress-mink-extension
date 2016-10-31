@@ -9,20 +9,12 @@ WP_PATH=/tmp/wordpress
 WP_TITLE='Welcome to the WordPress'
 WP_DESC='Hello World!'
 
-if [ -e "$WP_PATH/wp-config.php" ]; then
-    open http://127.0.0.1:$PORT
-    bin/wp server --host=0.0.0.0 --port=$PORT --docroot=$WP_PATH
-    exit 0
-fi
-
 if ! bin/wp --info ; then
     curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli-nightly.phar
     rm -fr bin && mkdir bin
     mv wp-cli-nightly.phar bin/wp
     chmod 755 bin/wp
 fi
-
-echo "path: www" > $(pwd)/wp-cli.yml
 
 bin/wp core download --path=$WP_PATH --locale=en_US --force
 
