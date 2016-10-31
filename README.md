@@ -1,4 +1,4 @@
-# WordPress Extension for the Behat/Mink
+# WordPress Extension for the Behat
 
 [![Build Status](https://travis-ci.org/vccw-team/wordpress-extension.svg?branch=master)](https://travis-ci.org/vccw-team/wordpress-extension)
 
@@ -36,7 +36,9 @@ default:
             wd_host: http://127.0.0.1:4444/wd/hub
 ```
 
-## Automated Testing
+## Contributing
+
+### Automated Testing
 
 Clone this repository.
 
