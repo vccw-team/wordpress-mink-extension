@@ -1,0 +1,15 @@
+default:
+  suites:
+    default:
+      paths:
+        - %paths.base%/features
+      contexts:
+        - Behat\MinkExtension\Context\MinkContext
+        - VCCW\Mink\WordPressExtension\Context
+  extensions:
+    Behat\MinkExtension:
+      base_url: http://127.0.0.1:8080
+      sessions:
+        default:
+          selenium2:
+            wd_host: http://127.0.0.1:4444/wd/hub
