@@ -47,5 +47,4 @@ if [ -e "provision-post.sh" ]; then
     bash provision-post.sh
 fi
 
-open http://127.0.0.1:$PORT
 bin/wp server --host=0.0.0.0 --port=$PORT --docroot=$WP_PATH --path=$WP_PATH
