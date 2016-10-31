@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/vccw-team/wordpress-extension.svg?branch=master)](https://travis-ci.org/vccw-team/wordpress-extension)
 
+BDD testing extension for the WordPress
+
 ## Getting Started
 
 The recomended way to install is by using Composer.
