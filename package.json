@@ -2,7 +2,8 @@
   "name": "wordpress-extension",
   "scripts": {
     "start": "phantomjs --webdriver=4444 --ignore-ssl-errors=yes --cookies-file=/tmp/webdriver_cookie.txt > /tmp/webdriver_output.txt &",
-    "stop": "pgrep phantomjs | xargs kill"
+    "stop": "pgrep phantomjs | xargs kill",
+    "test": "vendor/bin/behat"
   },
   "repository": {
     "type": "git",
