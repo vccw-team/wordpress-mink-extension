@@ -3,7 +3,6 @@
 namespace VCCW\Mink\WordPressExtension;
 
 use Behat\Mink\Driver\Selenium2Driver;
-use Behat\Behat\Hook\Scope\AfterStepScope;
 use Behat\MinkExtension\Context\RawMinkContext;
 
 /**
@@ -48,7 +47,7 @@ class Context extends RawMinkContext
 		$element = $page->find( 'css', $selector );
 
 		if (empty($element)) {
-			throw new Exception( "No html element found for the selector ('$selector')" );
+			throw new \Exception( "No html element found for the selector ('$selector')" );
 		}
 
 		$element->click();
@@ -78,14 +77,14 @@ class Context extends RawMinkContext
 				if ( $page->find( 'css', $selector ) ) {
 					return true;
 				}
-			} catch ( Exception $e ) {
+			} catch ( \Exception $e ) {
 				// do nothing
 			}
 
 			sleep( 1 );
 		}
 
-		throw new Exception( "No html element found for the selector ('$selector')" );
+		throw new \Exception( "No html element found for the selector ('$selector')" );
 	}
 
 	/**
