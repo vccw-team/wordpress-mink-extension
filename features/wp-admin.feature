@@ -17,7 +17,6 @@ Feature: WordPress Admin
 
     When I am on "/wp-admin/plugins.php"
     Then I should see "Plugins"
-    And I should see "Debug Bar"
 
     When I am on "/wp-admin/customize.php"
     Then I should see "Site Identity"
