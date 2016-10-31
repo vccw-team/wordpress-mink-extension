@@ -9,9 +9,8 @@ WP_PATH=/tmp/wordpress
 WP_TITLE='Welcome to the WordPress'
 WP_DESC='Hello World!'
 
-  curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli-nightly.phar
-  mv wp-cli-nightly.phar ./wp-cli-nightly.phar
-  chmod 755 ./wp-cli-nightly.phar
+curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli-nightly.phar
+chmod 755 ./wp-cli-nightly.phar
 
 ./wp-cli-nightly.phar core download --path=$WP_PATH --locale=en_US --force
 
