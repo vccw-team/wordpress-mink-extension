@@ -67,6 +67,15 @@ Start the phantomjs as a daemon.
 $ npm start
 ```
 
+Start a WordPress site.
+
+```
+$ export WP_PATH=/tmp/wordpress
+$ export WP_PORT=8080
+$ bash bin/install-wp.sh
+$ ./wp-cli-nightly.phar server --host=0.0.0.0 --port=$WP_PORT --docroot=$WP_PATH --path=$WP_PATH
+```
+
 Run the test!
 
 ```
