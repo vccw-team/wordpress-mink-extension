@@ -2,13 +2,15 @@
 
 namespace VCCW\Mink\WordPressExtension;
 
-use Behat\Mink\Driver\Selenium2Driver;
-use Behat\MinkExtension\Context\RawMinkContext;
+// use Behat\Gherkin\Node\PyStringNode,
+//     Behat\Gherkin\Node\TableNode;
+
+use Behat\MinkExtension\Context\MinkContext;
 
 /**
  * Features context.
  */
-class Context extends RawMinkContext
+class Context extends MinkContext
 {
 	/**
 	 * Initializes context.
