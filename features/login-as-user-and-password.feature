@@ -1,10 +1,10 @@
 Feature: I login as the specfic role
 
   @javascript
-  Scenario: Login as the "administrator" role
+  Scenario: Login as user "admin" with password "admin"
 
     Given the screen size is 1440x900
-    Given I login as the "administrator" role
+    Given I login as "admin" with password "admin"
 
     When I am on "/"
     Then I should see "Howdy, admin"

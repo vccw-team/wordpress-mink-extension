@@ -25,6 +25,16 @@ class WordPressContext extends MinkContext
 	}
 
 	/**
+	 * @param string $user The user name.
+	 * @param string $password The password.
+	 * @Given /^I login as "([a-zA-Z0-9_]+)" with password "([a-zA-Z0-9_]+)"$/
+	 */
+	public function login_as_user_password( $user, $password )
+	{
+		$this->_login( $user, $password );
+	}
+
+	/**
 	 * @When /^I login as the "([^"]*)" role$/
 	 */
 	public function login_as_the_role( $role )
@@ -58,21 +68,6 @@ class WordPressContext extends MinkContext
 		}
 
 		$element->mouseOver();
-	}
-
-	/**
-	 * @Given I click the :arg1 element
-	 */
-	public function click_the_element($selector)
-	{
-		$page = $this->getSession()->getPage();
-		$element = $page->find( 'css', $selector );
-
-		if (empty($element)) {
-			throw new \Exception( "No html element found for the selector ('$selector')" );
-		}
-
-		$element->click();
 	}
 
 	/**
@@ -117,16 +112,6 @@ class WordPressContext extends MinkContext
 	public function set_window_size( $width, $height )
 	{
 		$this->getSession()->getDriver()->resizeWindow( $width, $height, 'current' );
-	}
-
-	/**
-	 * @param string $user The user name.
-	 * @param string $password The password.
-	 * @Given /^I login as "([a-zA-Z0-9_]+)" with password "([a-zA-Z0-9_]+)"$/
-	 */
-	public function login_as_user_password( $user, $password )
-	{
-		$this->_login( $user, $password );
 	}
 
 	/**
