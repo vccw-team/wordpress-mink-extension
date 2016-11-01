@@ -2,8 +2,8 @@
 
 namespace VCCW\Behat\Mink\WordPressExtension\Context;
 
-// use Behat\Gherkin\Node\PyStringNode,
-//     Behat\Gherkin\Node\TableNode;
+use Behat\Gherkin\Node\PyStringNode,
+    Behat\Gherkin\Node\TableNode;
 
 use Behat\MinkExtension\Context\MinkContext;
 
@@ -25,17 +25,24 @@ class WordPressContext extends MinkContext
 	}
 
 	/**
-	 * @param string $user The user name.
-	 * @param string $password The password.
-	 * @Given /^I login as "([a-zA-Z0-9_]+)" with password "([a-zA-Z0-9_]+)"$/
+	 * Login with username and password.
+	 * Example: Given I login as "admin" width password "admin"
+	 *
+	 * @param string $username The user name.
+	 * @param string $password The password for the $username.
+	 * @Given /^I login as "(?P<username>(?:[^"]|\\")*)" with password "(?P<password>(?:[^"]|\\")*)"$/
 	 */
-	public function login_as_user_password( $user, $password )
+	public function login_as_user_password( $username, $password )
 	{
-		$this->_login( $user, $password );
+		$this->_login( $username, $password );
 	}
 
 	/**
-	 * @When /^I login as the "([^"]*)" role$/
+	 * Login as the role like "administrator", It should be defined in the `behat.yml`.
+	 * Example: Given I login as the "([^"]*)" role
+	 *
+	 * @param string $role The role that is defined in `behat.yml`.
+	 * @Given /^I login as the "(?P<role>[a-zA-Z]*)" role$/
 	 */
 	public function login_as_the_role( $role )
 	{
@@ -54,16 +61,20 @@ class WordPressContext extends MinkContext
 	}
 
 	/**
-	 * @When /^I hover over the "([^"]*)" element$/
+	 * The mouseover over the specific element.
+	 * Example: I hover over the ".site-title a" element
+	 *
+	 * @param string $selector The CSS selector.
+	 * @When /^I hover over the "(?P<selector>[^"]*)" element$/
 	 */
-	public function hover_over_the_element( $locator )
+	public function hover_over_the_element( $selector )
 	{
 		$session = $this->getSession();
-		$element = $session->getPage()->find( 'css', $locator );
+		$element = $session->getPage()->find( 'css', $selector );
 
 		if ( null === $element ) {
 			throw new \InvalidArgumentException( sprintf(
-				'Could not evaluate CSS selector: "%s"', $locator
+				'Could not evaluate CSS selector: "%s"', $selector
 			) );
 		}
 
@@ -71,16 +82,25 @@ class WordPressContext extends MinkContext
 	}
 
 	/**
-	 * @Given /^I wait for ([0-9]+) seconds$/
+	 * Wait for specific seconds.
+	 * Example:
+	 * * When I wait for 5 seconds
+	 * * When I wait for a second
+	 *
+	 * @param int $second The seconds that wait for.
+	 * @Given /^I wait for (?P<second>[0-9]+) seconds$/
 	 * @Given /^I wait for a second$/
 	 */
-	public function wait_for_second( $sec = 1 )
+	public function wait_for_second( $second = 1 )
 	{
-		$this->getSession()->wait( $sec * 1000 );
+		$this->getSession()->wait( $second * 1000 );
 	}
 
 	/**
-	 * @Given /^I wait the "(.*)" element be loaded$/
+	 * Wait the specific element will be loaded.
+	 * Example: I wait the "#wpadminbar" element be loaded
+	 *
+	 * @Given /^I wait the "(?P<selector>[^"]*)" element be loaded$/
 	 */
 	public function wait_the_element_be_loaded( $selector )
 	{
@@ -105,9 +125,12 @@ class WordPressContext extends MinkContext
 	}
 
 	/**
+	 * Change the screen size.
+	 * Example: Given the screen size is 1440x900
+	 *
 	 * @param int $width The screen width.
 	 * @param int $height The screen height.
-	 * @Given /^the screen size is ([0-9]+)x([0-9]+)/
+	 * @Given /^the screen size is (?P<width>[0-9]+)x(?P<height>[0-9]+)/
 	 */
 	public function set_window_size( $width, $height )
 	{
@@ -115,7 +138,10 @@ class WordPressContext extends MinkContext
 	}
 
 	/**
-	 * @Given /^I logout$/
+	 * Logout from the WordPress.
+	 * Example: When I logout
+	 *
+	 * @Given I logout
 	 */
 	public function logout()
 	{
@@ -123,8 +149,11 @@ class WordPressContext extends MinkContext
 	}
 
 	/**
+	 * Take a screenshot of the current page and save it to the specific path.
+	 * Example: Then take a screenshot and save it to "./path/to/image.png"
+	 *
 	 * @param string $path The path to the screenshot will be saved
-	 * @Given /^take a screenshot and save it to "(.*)"/
+	 * @Then /^take a screenshot and save it to "(.*)"/
 	 */
 	public function take_a_screenshot( $path )
 	{
