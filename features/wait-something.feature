@@ -4,7 +4,7 @@ Feature: I wait something happen
   Scenario: I wait the specific element be loaded
 
     Given the screen size is 1440x900
-    Given I login as the "administrator" role
+    And I login as the "administrator" role
 
     When I am on "/"
     And I wait the "#wpadminbar" element be loaded
@@ -18,7 +18,7 @@ Feature: I wait something happen
   Scenario: I wait for a second
 
     Given the screen size is 1440x900
-    Given I login as the "administrator" role
+    And I login as the "administrator" role
 
     When I am on "/"
     And I hover over the "#wp-admin-bar-my-account" element
@@ -34,7 +34,7 @@ Feature: I wait something happen
   Scenario: I wait for 5 seconds
 
     Given the screen size is 1440x900
-    Given I login as the "administrator" role
+    And I login as the "administrator" role
 
     When I am on "/"
     And I hover over the "#wp-admin-bar-my-account" element

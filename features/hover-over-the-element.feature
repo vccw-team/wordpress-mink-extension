@@ -4,11 +4,13 @@ Feature: Hover over the element
   Scenario: I hover over the specific element
 
     Given the screen size is 1440x900
-    Given I login as the "administrator" role
+
+    When I login as the "administrator" role
+    Then I should see "Dashboard"
 
     When I am on "/"
     And I hover over the "#wp-admin-bar-my-account" element
-    And I wait for a second
+    And I wait for 3 seconds
     Then I should see "Edit My Profile"
     And I should see "Log Out"
 
