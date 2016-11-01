@@ -4,7 +4,7 @@ namespace VCCW\Behat\Mink\WordPressExtension\Context;
 
 use Behat\Gherkin\Node\PyStringNode,
     Behat\Gherkin\Node\TableNode;
-
+use Behat\Behat\Hook\Scope\AfterStepScope;
 use Behat\MinkExtension\Context\MinkContext;
 
 /**
@@ -203,5 +203,13 @@ class WordPressContext extends MinkContext
 		if ( ! empty( $logout ) ) {
 			$this->getSession()->visit( $this->locatePath( $logout->getAttribute( "href" ) ) );
 		}
+	}
+
+  /**
+	 * @AfterStep
+	 */
+	public function after_step( afterStepScope $scope )
+	{
+    // something to do
 	}
 }
