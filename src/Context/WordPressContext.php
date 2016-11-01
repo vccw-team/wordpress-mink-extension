@@ -1,6 +1,6 @@
 <?php
 
-namespace VCCW\Mink\WordPressExtension;
+namespace VCCW\Behat\Mink\WordPressExtension\Context;
 
 // use Behat\Gherkin\Node\PyStringNode,
 //     Behat\Gherkin\Node\TableNode;
@@ -10,17 +10,37 @@ use Behat\MinkExtension\Context\MinkContext;
 /**
  * Features context.
  */
-class Context extends MinkContext
+class WordPressContext extends MinkContext
 {
-	/**
-	 * Initializes context.
-	 * Every scenario gets it's own context object.
-	 *
-	 * @param array $parameters context parameters (set them up through behat.yml)
-	 */
-	public function __construct()
+	private $parameters; // parameters from the `behat.yml`.
+
+	public function set_params( $params )
 	{
-		// Initialize your context here
+		$this->parameters = $params;
+	}
+
+	public function get_params()
+	{
+		return $this->parameters;
+	}
+
+	/**
+	 * @When /^I login as the "([^"]*)" role$/
+	 */
+	public function login_as_the_role( $role )
+	{
+		$p = $this->get_params();
+
+		if ( empty( $p['roles'][ $role ] ) ) {
+			throw new \InvalidArgumentException( sprintf(
+				"Role '%s' is not defined in the `behat.yml`", $role
+			) );
+		} else {
+			$this->_login(
+				$p['roles'][ $role ]['username'],
+				$p['roles'][ $role ]['password']
+			);
+		}
 	}
 
 	/**

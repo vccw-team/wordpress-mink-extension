@@ -20,7 +20,7 @@
     },
     "autoload": {
       "psr-4": {
-        "VCCW\\Mink\\WordPressExtension\\": "src/"
+        "VCCW\\Behat\\Mink\\WordPressExtension\\": "src/"
       }
     }
 }

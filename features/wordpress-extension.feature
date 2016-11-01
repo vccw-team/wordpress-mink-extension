@@ -7,7 +7,7 @@ Feature: Admin bar
     And I should see "Welcome to the WordPress" in the "h1.site-title" element
 
   @javascript
-  Scenario: Showing the Homepage with login
+  Scenario: Login with username and passowrd
 
     Given the screen size is 1440x900
     And I login as "admin" with password "admin"
