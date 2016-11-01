@@ -142,6 +142,7 @@ class WordPressContext extends MinkContext
 	 * Example: When I logout
 	 *
 	 * @Given I logout
+	 * @Given I am not logged in
 	 */
 	public function logout()
 	{
@@ -189,6 +190,13 @@ class WordPressContext extends MinkContext
 		}
 
 		$submit->click();
+
+		$current_url = $this->getSession()->getCurrentUrl();
+		if ( "/wp-admin/" === substr( $current_url, 0 - strlen( "/wp-admin/" ) ) ) {
+			return true;
+		} else {
+			throw new \Exception( 'Login failed.' );
+		}
 	}
 
 	/**
@@ -198,6 +206,11 @@ class WordPressContext extends MinkContext
 	 */
 	private function _logout()
 	{
+		$this->getSession()->visit( $this->locatePath( '/wp-admin/' ) );
+		$current_url = $this->getSession()->getCurrentUrl();
+		if ( "/wp-admin/" !== substr( $current_url, 0 - strlen( "/wp-admin/" ) ) ) {
+			return true; // user isn't login.
+		}
 		$page = $this->getSession()->getPage();
 		$logout = $page->find( "css", "#wp-admin-bar-logout a" );
 		if ( ! empty( $logout ) ) {
@@ -205,11 +218,11 @@ class WordPressContext extends MinkContext
 		}
 	}
 
-  /**
+	/**
 	 * @AfterStep
 	 */
 	public function after_step( afterStepScope $scope )
 	{
-    // something to do
+		// something to do
 	}
 }
