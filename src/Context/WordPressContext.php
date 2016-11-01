@@ -3,7 +3,7 @@
 namespace VCCW\Behat\Mink\WordPressExtension\Context;
 
 use Behat\Gherkin\Node\PyStringNode,
-    Behat\Gherkin\Node\TableNode;
+		Behat\Gherkin\Node\TableNode;
 use Behat\Behat\Hook\Scope\AfterStepScope;
 use Behat\MinkExtension\Context\MinkContext;
 
@@ -178,20 +178,13 @@ class WordPressContext extends MinkContext
 		$this->_logout();
 
 		$this->getSession()->visit( $this->locatePath( '/wp-login.php' ) );
+
 		$element = $this->getSession()->getPage();
 		$element->fillField( "user_login", $user );
 		$element->fillField( "user_pass", $password );
+
 		$submit = $element->findButton( "wp-submit" );
-		if ( empty( $submit ) ) {
-			throw new \Exception( sprintf(
-				"No submit button at %s",
-				$this->getSession()->getCurrentUrl()
-			) );
-		}
-
 		$submit->click();
-
-    $this->assertSession()->addressEquals( $this->locatePath( '/wp-admin/' ) );
 	}
 
 	/**
