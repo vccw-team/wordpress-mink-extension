@@ -191,11 +191,7 @@ class WordPressContext extends MinkContext
 
 		$submit->click();
 
-		if ( $this->assertSession()->addressEquals( $this->locatePath( '/wp-admin/' ) ) ) {
-			return true;
-		} else {
-			throw new \Exception( 'Login failed.' );
-		}
+    $this->assertSession()->addressEquals( $this->locatePath( '/wp-admin/' ) );
 	}
 
 	/**
