@@ -124,7 +124,7 @@ class WordPressContext extends MinkContext
 
 	/**
 	 * @param string $path The path to the screenshot will be saved
-	 * @Given /^I take a screenshot and save to the "(.*)" file$/
+	 * @Given /^take the screenshot to "(.*)"/
 	 */
 	public function take_a_screenshot( $path )
 	{
