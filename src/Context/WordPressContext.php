@@ -191,6 +191,7 @@ class WordPressContext extends MinkContext
 
 		$submit->click();
 
+		$this->getSession()->visit( $this->locatePath( '/wp-admin/' ) );
 		$current_url = $this->getSession()->getCurrentUrl();
 		if ( "/wp-admin/" === substr( $current_url, 0 - strlen( "/wp-admin/" ) ) ) {
 			return true;
