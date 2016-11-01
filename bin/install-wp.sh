@@ -39,4 +39,4 @@ PHP
 ./wp-cli-nightly.phar option update blogname "$WP_TITLE" --path=$WP_PATH
 ./wp-cli-nightly.phar option update blogdescription "$WP_DESC" --path=$WP_PATH
 
-./wp-cli-nightly.phar user create editor editor@example.com --role=editor --user_pass=editor
+./wp-cli-nightly.phar user create editor editor@example.com --role=editor --user_pass=editor --path=$WP_PATH
