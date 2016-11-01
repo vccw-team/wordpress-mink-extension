@@ -185,14 +185,6 @@ class WordPressContext extends MinkContext
 
 		$submit = $element->findButton( "wp-submit" );
 		$submit->click();
-
-		$this->getSession()->visit( $this->locatePath( '/wp-admin/' ) );
-		$current_url = $this->getSession()->getCurrentUrl();
-		if ( "/wp-admin/" === substr( $current_url, 0 - strlen( "/wp-admin/" ) ) ) {
-			return true;
-		} else {
-			throw new \Exception( 'Login failed.' . $current_url );
-		}
 	}
 
 	/**
