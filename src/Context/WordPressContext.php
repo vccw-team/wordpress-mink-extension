@@ -130,7 +130,11 @@ class WordPressContext extends MinkContext
 	{
 		$path = str_replace( "~", posix_getpwuid(posix_geteuid())['dir'], $path );
 		$image = $this->getSession()->getDriver()->getScreenshot();
-		file_put_contents( $path, $image );
+		$result = file_put_contents( $path, $image );
+
+		if ( ! $result ) {
+			throw new \Exception( 'Cannot take a screenshot.' );
+		}
 	}
 
 	/**
@@ -152,7 +156,7 @@ class WordPressContext extends MinkContext
 			throw new \Exception( sprintf(
 				"No submit button at %s",
 				$this->getSession()->getCurrentUrl()
-			));
+			) );
 		}
 
 		$submit->click();

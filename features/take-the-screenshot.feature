@@ -1,13 +1,13 @@
-Feature: The screen size
+Feature: Take the screenshot
 
   @javascript
-  Scenario: The screen size is 1440x900
+  Scenario: Take the screenshot of the current page
 
     Given the screen size is 1440x900
     And I login as the "administrator" role
 
     When I am on "/wp-admin/"
-    Then I should see "Dashboard" in the "#adminmenu" element
+    Then take the screenshot to "/tmp/test-1.png"
 
   @javascript
   Scenario: The screen size is 320x400
@@ -16,4 +16,4 @@ Feature: The screen size
     And I login as the "administrator" role
 
     When I am on "/wp-admin/"
-    Then I should not see "Dashboard" in the "#adminmenu" element
+    Then take the screenshot to "/tmp/test-2.png"
