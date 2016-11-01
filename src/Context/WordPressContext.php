@@ -196,7 +196,7 @@ class WordPressContext extends MinkContext
 		if ( "/wp-admin/" === substr( $current_url, 0 - strlen( "/wp-admin/" ) ) ) {
 			return true;
 		} else {
-			throw new \Exception( 'Login failed.' );
+			throw new \Exception( 'Login failed.' . $current_url );
 		}
 	}
 
