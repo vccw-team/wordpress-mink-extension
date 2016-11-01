@@ -190,10 +190,8 @@ class WordPressContext extends MinkContext
 		}
 
 		$submit->click();
-		$this->getSession()->wait( 1000 );
 
-		$current_url = $this->getSession()->getCurrentUrl();
-		if ( "/wp-admin/" === substr( $current_url, 0 - strlen( "/wp-admin/" ) ) ) {
+		if ( $this->assertSession()->addressEquals( $this->locatePath( '/wp-admin/' ) ) ) {
 			return true;
 		} else {
 			throw new \Exception( 'Login failed.' . $current_url );
