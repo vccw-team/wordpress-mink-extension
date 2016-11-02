@@ -37,11 +37,11 @@ class WordPressExtension implements ExtensionInterface
 			->children()
 				->arrayNode( 'roles' )
 					->prototype('array')
-		                ->children()
-		                    ->scalarNode('username')->end()
-		                    ->scalarNode('password')->end()
-		                ->end()
-		            ->end()
+						->children()
+							->scalarNode('username')->end()
+							->scalarNode('password')->end()
+						->end()
+					->end()
 				->end()
 			->end();
 	}
