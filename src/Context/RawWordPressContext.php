@@ -28,7 +28,7 @@ class RawWordPressContext extends RawMinkContext
 		$submit = $element->findButton( "wp-submit" );
 		$submit->click();
 
-		for ( $i = 0; $i < 10; $i++ ) {
+		for ( $i = 0; $i < 30; $i++ ) {
 			try {
 				$page = $this->getSession()->getPage();
 				if ( $page->find( 'css', "body.wp-core-ui" ) ) {
@@ -41,7 +41,7 @@ class RawWordPressContext extends RawMinkContext
 			sleep( 1 );
 		}
 
-		return false;
+		throw new \Exception( 'Login timeout' );
 	}
 
 	/**
