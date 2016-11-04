@@ -9,6 +9,8 @@ use Behat\MinkExtension\Context\RawMinkContext;
  */
 class RawWordPressContext extends RawMinkContext
 {
+	protected $timeout = 30;
+
 	/**
 	 * Log in into the WordPress
 	 *
@@ -28,7 +30,7 @@ class RawWordPressContext extends RawMinkContext
 		$submit = $element->findButton( "wp-submit" );
 		$submit->click();
 
-		for ( $i = 0; $i < 30; $i++ ) {
+		for ( $i = 0; $i < $this->timeout; $i++ ) {
 			try {
 				$page = $this->getSession()->getPage();
 				if ( $page->find( 'css', "body.wp-core-ui" ) ) {
@@ -59,6 +61,21 @@ class RawWordPressContext extends RawMinkContext
 		$logout = $page->find( "css", "#wp-admin-bar-logout a" );
 		if ( ! empty( $logout ) ) {
 			$this->getSession()->visit( $this->locatePath( $logout->getAttribute( "href" ) ) );
+
+			for ( $i = 0; $i < $this->timeout; $i++ ) {
+				try {
+					$url = $this->getSession()->getCurrentUrl();
+					if ( strpos( $url, "loggedout=true" ) ) {
+						return true;
+					}
+				} catch ( \Exception $e ) {
+					// do nothing
+				}
+
+				sleep( 1 );
+			}
+
+			throw new \Exception( 'Logout timeout' );
 		}
 	}
 

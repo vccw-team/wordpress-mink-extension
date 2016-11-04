@@ -6,7 +6,7 @@ Feature: I login as the specfic role
     Given the screen size is 1440x900
 
     When I login as "admin" with password "admin"
-    Then I should have logged in
+    Then I should be logged in
     And I should see "Dashboard"
 
     When I am on "/"

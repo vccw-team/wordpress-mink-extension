@@ -27,7 +27,7 @@ class WordPressContext extends RawWordPressContext
 	 * Return exception if user haven't logged in
 	 * Example: Then I should have logged in
 	 *
-	 * @Then I should have logged in
+	 * @Then I should be logged in
 	 */
 	public function i_have_loggend_in()
 	{
@@ -116,12 +116,10 @@ class WordPressContext extends RawWordPressContext
 	 */
 	public function wait_the_element_be_loaded( $selector )
 	{
-		$wait = 60;
-
 		$page = $this->getSession()->getPage();
 		$element = $page->find( 'css', $selector );
 
-		for ( $i = 0; $i < $wait; $i++ ) {
+		for ( $i = 0; $i < $this->timeout; $i++ ) {
 			try {
 				if ( $page->find( 'css', $selector ) ) {
 					return true;
