@@ -5,6 +5,7 @@ default:
         - %paths.base%/features
       contexts:
         - VCCW\Behat\Mink\WordPressExtension\Context\WordPressContext
+        - Behat\MinkExtension\Context\MinkContext
   extensions:
     VCCW\Behat\Mink\WordPressExtension:
       roles:

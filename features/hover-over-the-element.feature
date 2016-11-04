@@ -5,7 +5,6 @@ Feature: Hover over the element
 
     Given the screen size is 1440x900
     And I login as the "administrator" role
-    And I wait for 3 seconds
 
     When I am on "/"
     And I hover over the "#wp-admin-bar-my-account" element

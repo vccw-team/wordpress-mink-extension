@@ -16,6 +16,7 @@ before_install:
   - ./wp-cli-nightly.phar server --host=0.0.0.0 --port=$WP_PORT --docroot=$WP_PATH --path=$WP_PATH  >/dev/null 2>&1 &
   - npm install
   - npm start
+  - sleep 10
 
 script:
   - npm test

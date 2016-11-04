@@ -5,12 +5,11 @@ namespace VCCW\Behat\Mink\WordPressExtension\Context;
 use Behat\Gherkin\Node\PyStringNode,
 		Behat\Gherkin\Node\TableNode;
 use Behat\Behat\Hook\Scope\AfterStepScope;
-use Behat\MinkExtension\Context\MinkContext;
 
 /**
  * Features context.
  */
-class WordPressContext extends MinkContext
+class WordPressContext extends RawWordPressContext
 {
 	private $parameters; // parameters from the `behat.yml`.
 
@@ -25,6 +24,19 @@ class WordPressContext extends MinkContext
 	}
 
 	/**
+	 * Return exception if user haven't logged in
+	 * Example: Then I should have logged in
+	 *
+	 * @Then I should have logged in
+	 */
+	public function i_have_loggend_in()
+	{
+		if ( ! $this->is_logged_in() ) {
+			throw new \Exception( "You haven't logged in" );
+		}
+	}
+
+	/**
 	 * Login with username and password.
 	 * Example: Given I login as "admin" width password "admin"
 	 *
@@ -34,7 +46,7 @@ class WordPressContext extends MinkContext
 	 */
 	public function login_as_user_password( $username, $password )
 	{
-		$this->_login( $username, $password );
+		$this->login( $username, $password );
 	}
 
 	/**
@@ -53,7 +65,7 @@ class WordPressContext extends MinkContext
 				"Role '%s' is not defined in the `behat.yml`", $role
 			) );
 		} else {
-			$this->_login(
+			$this->login(
 				$p['roles'][ $role ]['username'],
 				$p['roles'][ $role ]['password']
 			);
@@ -144,9 +156,9 @@ class WordPressContext extends MinkContext
 	 * @Given I logout
 	 * @Given I am not logged in
 	 */
-	public function logout()
+	public function i_logout()
 	{
-		$this->_logout();
+		$this->logout();
 	}
 
 	/**
@@ -164,45 +176,6 @@ class WordPressContext extends MinkContext
 
 		if ( ! $result ) {
 			throw new \Exception( 'Cannot take a screenshot.' );
-		}
-	}
-
-	/**
-	 * Log in into the WordPress
-	 *
-	 * @param string $user The user name.
-	 * @param string $password The password.
-	 */
-	private function _login( $user, $password )
-	{
-		$this->_logout();
-
-		$this->getSession()->visit( $this->locatePath( '/wp-login.php' ) );
-
-		$element = $this->getSession()->getPage();
-		$element->fillField( "user_login", $user );
-		$element->fillField( "user_pass", $password );
-
-		$submit = $element->findButton( "wp-submit" );
-		$submit->click();
-	}
-
-	/**
-	 * Log out from WordPress
-	 *
-	 * @param none
-	 */
-	private function _logout()
-	{
-		$this->getSession()->visit( $this->locatePath( '/wp-admin/' ) );
-		$current_url = $this->getSession()->getCurrentUrl();
-		if ( "/wp-admin/" !== substr( $current_url, 0 - strlen( "/wp-admin/" ) ) ) {
-			return true; // user isn't login.
-		}
-		$page = $this->getSession()->getPage();
-		$logout = $page->find( "css", "#wp-admin-bar-logout a" );
-		if ( ! empty( $logout ) ) {
-			$this->getSession()->visit( $this->locatePath( $logout->getAttribute( "href" ) ) );
 		}
 	}
 
