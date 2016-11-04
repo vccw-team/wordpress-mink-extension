@@ -7,6 +7,7 @@ Feature: Hover over the element
     And I login as the "administrator" role
 
     When I am on "/"
+    And I wait the "#wp-admin-bar-my-account" element be loaded
     And I hover over the "#wp-admin-bar-my-account" element
     And I wait for 3 seconds
     Then I should see "Edit My Profile"
