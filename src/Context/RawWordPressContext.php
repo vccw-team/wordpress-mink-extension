@@ -2,9 +2,6 @@
 
 namespace VCCW\Behat\Mink\WordPressExtension\Context;
 
-use Behat\Gherkin\Node\PyStringNode,
-		Behat\Gherkin\Node\TableNode;
-use Behat\Behat\Hook\Scope\AfterStepScope;
 use Behat\MinkExtension\Context\RawMinkContext;
 
 /**

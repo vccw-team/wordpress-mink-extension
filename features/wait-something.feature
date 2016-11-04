@@ -26,10 +26,6 @@ Feature: I wait something happen
     Then I should see "Edit My Profile"
     And I should see "Log Out"
 
-    When I logout
-    And I am on "/"
-    Then I should not see "Howdy,"
-
   @javascript
   Scenario: I wait for 5 seconds
 
@@ -41,7 +37,3 @@ Feature: I wait something happen
     And I wait for 5 seconds
     Then I should see "Edit My Profile"
     And I should see "Log Out"
-
-    When I logout
-    And I am on "/"
-    Then I should not see "Howdy,"
