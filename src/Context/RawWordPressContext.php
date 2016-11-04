@@ -27,6 +27,21 @@ class RawWordPressContext extends RawMinkContext
 
 		$submit = $element->findButton( "wp-submit" );
 		$submit->click();
+
+		for ( $i = 0; $i < 10; $i++ ) {
+			try {
+				$page = $this->getSession()->getPage();
+				if ( $page->find( 'css', "body.wp-core-ui" ) ) {
+					return true;
+				}
+			} catch ( \Exception $e ) {
+				// do nothing
+			}
+
+			sleep( 1 );
+		}
+
+		return false;
 	}
 
 	/**
