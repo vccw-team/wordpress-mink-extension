@@ -4,9 +4,7 @@ Feature: Hover over the element
   Scenario: I hover over the specific element
 
     Given the screen size is 1440x900
-
-    When I login as the "administrator" role
-    Then I should see "Dashboard"
+    And I login as the "administrator" role
 
     When I am on "/"
     And I hover over the "#wp-admin-bar-my-account" element
