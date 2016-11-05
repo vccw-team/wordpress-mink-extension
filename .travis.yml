@@ -1,3 +1,6 @@
+sudo: required
+dist: trusty
+
 language: php
 
 php:
@@ -13,6 +16,9 @@ env:
     - WP_PORT=8080
 
 before_install:
+  - sudo rm -rf ~/.nvm
+  - curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+  - sudo apt-get install -y nodejs
   - composer install
   - mysql -e "create database IF NOT EXISTS wordpress;" -uroot
   - bash bin/install-wp.sh
