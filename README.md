@@ -51,6 +51,12 @@ $ npm install
 $ composer install
 ```
 
+Start the phantomjs as a daemon.
+
+```
+$ npm start
+```
+
 Start a WordPress site.
 
 ```
@@ -64,4 +70,10 @@ Run the test!
 
 ```
 $ npm test
+```
+
+Stop phantomjs.
+
+```
+$ npm stop
 ```
