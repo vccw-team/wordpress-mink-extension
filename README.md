@@ -11,7 +11,7 @@
 The recomended way to install is by using Composer.
 
 ```
-$ composer require vccw-team/wordpress-extension
+$ composer require vccw-team/wordpress-extension:@stable
 ```
 
 After that you will be able to initialize the project.
