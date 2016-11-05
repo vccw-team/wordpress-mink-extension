@@ -1,6 +1,10 @@
 # WordPress Extension for the Behat
 
 [![Build Status](https://travis-ci.org/vccw-team/wordpress-extension.svg?branch=master)](https://travis-ci.org/vccw-team/wordpress-extension)
+[![Latest Stable Version](https://poser.pugx.org/vccw-team/wordpress-extension/v/stable)](https://packagist.org/packages/vccw-team/wordpress-extension)
+[![Total Downloads](https://poser.pugx.org/vccw-team/wordpress-extension/downloads)](https://packagist.org/packages/vccw-team/wordpress-extension)
+[![Latest Unstable Version](https://poser.pugx.org/vccw-team/wordpress-extension/v/unstable)](https://packagist.org/packages/vccw-team/wordpress-extension)
+[![License](https://poser.pugx.org/vccw-team/wordpress-extension/license)](https://packagist.org/packages/vccw-team/wordpress-extension)
 
 ## Getting Started
 
