@@ -16,6 +16,6 @@
   },
   "homepage": "https://github.com/vccw-team/wordpress-extension#readme",
   "devDependencies": {
-    "phantomjs": "^2.1.7"
+    "phantomjs-prebuilt": "^2.1.13"
   }
 }
