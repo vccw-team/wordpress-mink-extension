@@ -1,3 +1,6 @@
-vendor/
+.travis.yml
+bin/
 node_modules/
+package.json
+vendor/
 wp-cli-nightly.phar
