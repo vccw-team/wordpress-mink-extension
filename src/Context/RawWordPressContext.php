@@ -9,7 +9,7 @@ use Behat\MinkExtension\Context\RawMinkContext;
  */
 class RawWordPressContext extends RawMinkContext
 {
-	protected $timeout = 30;
+	protected $timeout = 60;
 
 	/**
 	 * Log in into the WordPress

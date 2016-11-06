@@ -2,7 +2,7 @@
   "name": "wordpress-extension",
   "scripts": {
     "wp-install": "/usr/bin/env bash bin/install-wp.sh",
-    "wp-start": "./wp-cli-nightly.phar server --host=0.0.0.0 --port=8080 --docroot=/tmp/wordpress --path=/tmp/wordpress",
+    "wp": "./wp-cli-nightly.phar server --host=0.0.0.0 --port=8080 --docroot=/tmp/wordpress --path=/tmp/wordpress",
     "phantomjs-start": "phantomjs --webdriver=4444 --ignore-ssl-errors=yes --cookies-file=/tmp/webdriver_cookie.txt > /tmp/webdriver_output.txt &",
     "phantomjs-stop": "pgrep phantomjs | xargs kill",
     "test": "/usr/bin/env node bin/run-tests.js"

@@ -11,7 +11,7 @@ before_install:
   - composer install
   - npm install
   - npm run wp-install
-  - npm run wp-start >/dev/null 2>&1 &
+  - npm run wp >/dev/null 2>&1 &
 
 script:
   - npm test
