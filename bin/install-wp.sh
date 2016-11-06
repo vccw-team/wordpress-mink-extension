@@ -2,6 +2,9 @@
 
 set -ex;
 
+WP_PATH=/tmp/wordpress
+WP_PORT=8080
+
 DB_USER=root
 DB_NAME=wordpress
 WP_TITLE='Welcome to the WordPress'

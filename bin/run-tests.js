@@ -6,6 +6,5 @@ phantomjs.run(
   '--cookies-file=/tmp/webdriver_cookie.txt'
 ).then( program => {
   const behat = spawn( 'vendor/bin/behat', [], { stdio: "inherit" } )
-  behat.stdout.pipe( process.stdout )
   behat.on( 'exit', code => { program.kill() } )
 } )
