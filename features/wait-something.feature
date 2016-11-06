@@ -10,15 +10,9 @@ Feature: I wait something happen
     And I wait the "#wpadminbar" element be loaded
     Then I should see "Howdy,"
 
-  @javascript
-  Scenario: I wait for a second
-
     When I am on "/"
     And I wait for a second
     Then I should see "Welcome"
-
-  @javascript
-  Scenario: I wait for 5 seconds
 
     When I am on "/"
     And I wait for 5 seconds

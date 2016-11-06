@@ -9,7 +9,7 @@ use Behat\MinkExtension\Context\RawMinkContext;
  */
 class RawWordPressContext extends RawMinkContext
 {
-	protected $timeout = 30;
+	protected $timeout = 60;
 
 	/**
 	 * Log in into the WordPress
@@ -22,6 +22,7 @@ class RawWordPressContext extends RawMinkContext
 		$this->logout();
 
 		$this->getSession()->visit( $this->locatePath( '/wp-login.php' ) );
+		$this->wait_the_element( "#loginform" );
 
 		$element = $this->getSession()->getPage();
 		$element->fillField( "user_login", $user );
@@ -101,5 +102,32 @@ class RawWordPressContext extends RawMinkContext
 			$session->visit( $url );
 			return false;
 		}
+	}
+
+	/**
+	 * Wait the $selector to be loaded
+	 *
+	 * @param string $selector The CSS selector.
+	 * @return boolean
+	 */
+	protected function wait_the_element( $selector )
+	{
+		$page = $this->getSession()->getPage();
+		$element = $page->find( 'css', $selector );
+
+		for ( $i = 0; $i < $this->timeout; $i++ ) {
+			try {
+				if ( $page->find( 'css', $selector ) ) {
+					sleep( 1 );
+					return true;
+				}
+			} catch ( \Exception $e ) {
+				// do nothing
+			}
+
+			sleep( 1 );
+		}
+
+		throw new \Exception( "No html element found for the selector ('$selector')" );
 	}
 }

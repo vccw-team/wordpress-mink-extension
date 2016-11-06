@@ -116,22 +116,7 @@ class WordPressContext extends RawWordPressContext
 	 */
 	public function wait_the_element_be_loaded( $selector )
 	{
-		$page = $this->getSession()->getPage();
-		$element = $page->find( 'css', $selector );
-
-		for ( $i = 0; $i < $this->timeout; $i++ ) {
-			try {
-				if ( $page->find( 'css', $selector ) ) {
-					return true;
-				}
-			} catch ( \Exception $e ) {
-				// do nothing
-			}
-
-			sleep( 1 );
-		}
-
-		throw new \Exception( "No html element found for the selector ('$selector')" );
+		return $this->wait_the_element( $selector );
 	}
 
 	/**

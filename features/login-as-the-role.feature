@@ -23,4 +23,4 @@ Feature: I login as the specfic role
     Then I should see "Dashboard"
 
     When I am on "/wp-admin/plugins.php"
-    Then I should see "Sorry, you are not allowed to access this page."
+    Then I should see a "#error-page" element

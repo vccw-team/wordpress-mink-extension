@@ -1,6 +1,7 @@
 .travis.yml
 bin/
 node_modules/
+npm-debug.log
 package.json
 vendor/
 wp-cli-nightly.phar

@@ -1,13 +1,17 @@
 # WordPress Extension for the Behat
 
 [![Build Status](https://travis-ci.org/vccw-team/wordpress-extension.svg?branch=master)](https://travis-ci.org/vccw-team/wordpress-extension)
+[![Latest Stable Version](https://poser.pugx.org/vccw-team/wordpress-extension/v/stable)](https://packagist.org/packages/vccw-team/wordpress-extension)
+[![Total Downloads](https://poser.pugx.org/vccw-team/wordpress-extension/downloads)](https://packagist.org/packages/vccw-team/wordpress-extension)
+[![Latest Unstable Version](https://poser.pugx.org/vccw-team/wordpress-extension/v/unstable)](https://packagist.org/packages/vccw-team/wordpress-extension)
+[![License](https://poser.pugx.org/vccw-team/wordpress-extension/license)](https://packagist.org/packages/vccw-team/wordpress-extension)
 
 ## Getting Started
 
 The recomended way to install is by using Composer.
 
 ```
-$ composer require vccw-team/wordpress-extension
+$ composer require vccw-team/wordpress-extension:@stable
 ```
 
 After that you will be able to initialize the project.
@@ -47,29 +51,15 @@ $ npm install
 $ composer install
 ```
 
-Start the phantomjs as a daemon.
-
-```
-$ npm start
-```
-
 Start a WordPress site.
 
 ```
-$ export WP_PATH=/tmp/wordpress
-$ export WP_PORT=8080
-$ bash bin/install-wp.sh
-$ ./wp-cli-nightly.phar server --host=0.0.0.0 --port=$WP_PORT --docroot=$WP_PATH --path=$WP_PATH
+$ npm run wp-install
+$ npm run wp-start
 ```
 
 Run the test!
 
 ```
 $ npm test
-```
-
-Stop phantomjs.
-
-```
-$ npm stop
 ```

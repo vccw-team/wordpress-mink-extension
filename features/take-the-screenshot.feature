@@ -8,12 +8,3 @@ Feature: Take the screenshot
 
     When I am on "/wp-admin/"
     Then take a screenshot and save it to "/tmp/test-1.png"
-
-  @javascript
-  Scenario: The screen size is 320x400
-
-    Given the screen size is 320x400
-    And I login as the "administrator" role
-
-    When I am on "/wp-admin/"
-    Then take a screenshot and save it to "/tmp/test-2.png"
