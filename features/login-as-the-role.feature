@@ -23,4 +23,4 @@ Feature: I login as the specfic role
     Then I should see "Dashboard"
 
     When I am on "/wp-admin/plugins.php"
-    Then I should see a "#error-pag" element
+    Then I should see a "#error-page" element
