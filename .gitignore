@@ -1,5 +1,7 @@
 .travis.yml
+behat.yml.dist
 bin/
+features/
 node_modules/
 npm-debug.log
 package.json
