@@ -11,6 +11,9 @@ if [ -e $WP_PATH ]; then
     rm -fr $WP_PATH
 fi
 
+mysql -e "drop database IF EXISTS wordpress;" -uroot
+mysql -e "create database IF NOT EXISTS wordpress;" -uroot
+
 curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli-nightly.phar
 chmod 755 ./wp-cli-nightly.phar
 

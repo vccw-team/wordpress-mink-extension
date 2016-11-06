@@ -10,18 +10,13 @@ env:
     - WP_PORT=8080
 
 before_install:
-  - which node
-  - node --version
   - nvm install node
   - nvm alias default node
   - node --version
   - composer install
-  - mysql -e "create database IF NOT EXISTS wordpress;" -uroot
   - bash bin/install-wp.sh
   - ./wp-cli-nightly.phar server --host=0.0.0.0 --port=$WP_PORT --docroot=$WP_PATH --path=$WP_PATH  >/dev/null 2>&1 &
   - npm install
-  - npm run phantomjs-start
-  - sleep 10
 
 script:
   - npm test
