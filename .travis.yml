@@ -12,7 +12,8 @@ env:
 before_install:
   - which node
   - node --version
-  - nvm alias default latest
+  - nvm install node
+  - nvm alias default node
   - node --version
   - composer install
   - mysql -e "create database IF NOT EXISTS wordpress;" -uroot
