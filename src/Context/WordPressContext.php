@@ -44,8 +44,20 @@ class WordPressContext extends RawWordPressContext
 	{
 		$version = $this->replace_variables( $version );
 
+		if ( "latest" === $version || "nightly" === $version ) {
+			$api = file_get_contents( "https://api.wordpress.org/core/version-check/1.7/" );
+			$versions = json_decode( $api );
+			$latest = $versions->offers[0]->current;
+		}
+
+		if ( "latest" === $version ) {
+			$version = $latest;
+		}
+
 		$the_version = $this->get_wp_version();
 		if ( 0 === strpos( $the_version, $version ) ) {
+			return true;
+		} elseif ( "nightly" === $version && version_compare( $the_version, $latest, ">=" ) ) {
 			return true;
 		} else {
 			throw new \Exception( sprintf(
@@ -79,6 +91,9 @@ class WordPressContext extends RawWordPressContext
 	 */
 	public function login_as_user_password( $username, $password )
 	{
+		$username = $this->replace_variables( $username );
+		$password = $this->replace_variables( $password );
+
 		$this->login( $username, $password );
 	}
 
@@ -91,6 +106,8 @@ class WordPressContext extends RawWordPressContext
 	 */
 	public function login_as_the_role( $role )
 	{
+		$role = $this->replace_variables( $role );
+
 		$p = $this->get_params();
 
 		if ( empty( $p['roles'][ $role ] ) ) {
@@ -114,6 +131,8 @@ class WordPressContext extends RawWordPressContext
 	 */
 	public function hover_over_the_element( $selector )
 	{
+		$selector = $this->replace_variables( $selector );
+
 		$session = $this->getSession();
 		$element = $session->getPage()->find( 'css', $selector );
 
@@ -138,6 +157,7 @@ class WordPressContext extends RawWordPressContext
 	 */
 	public function wait_for_second( $second = 1 )
 	{
+		$second = $this->replace_variables( $second );
 		$this->getSession()->wait( $second * 1000 );
 	}
 
@@ -149,6 +169,7 @@ class WordPressContext extends RawWordPressContext
 	 */
 	public function wait_the_element_be_loaded( $selector )
 	{
+		$selector = $this->replace_variables( $selector );
 		return $this->wait_the_element( $selector );
 	}
 
@@ -162,6 +183,9 @@ class WordPressContext extends RawWordPressContext
 	 */
 	public function set_window_size( $width, $height )
 	{
+		$width = $this->replace_variables( $width );
+		$height = $this->replace_variables( $height );
+
 		$this->getSession()->getDriver()->resizeWindow( $width, $height, 'current' );
 	}
 
@@ -186,6 +210,8 @@ class WordPressContext extends RawWordPressContext
 	 */
 	public function take_a_screenshot( $path )
 	{
+		$path = $this->replace_variables( $path );
+
 		$path = str_replace( "~", posix_getpwuid(posix_geteuid())['dir'], $path );
 		$image = $this->getSession()->getDriver()->getScreenshot();
 		$result = file_put_contents( $path, $image );
