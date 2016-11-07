@@ -11,23 +11,11 @@ use Behat\Behat\Hook\Scope\AfterStepScope;
  */
 class WordPressContext extends RawWordPressContext
 {
-	private $parameters; // parameters from the `behat.yml`.
-
-	public function set_params( $params )
-	{
-		$this->parameters = $params;
-	}
-
-	public function get_params()
-	{
-		return $this->parameters;
-	}
-
 	/**
 	 * Save env to variable
 	 * Example: Given save env $WP_VERSION as {WP_VERSION}
 	 *
-	 * @Given /^save env \$(?P<env>[a-zA-Z0-9_]+) as \{(?P<var>[a-zA-Z0-9_]+)\}$/
+	 * @Given /^save env \$(?P<env>[A-Z_]+) as \{(?P<var>[A-Z_]+)\}$/
 	 */
 	public function save_env_as_var( $env, $var )
 	{

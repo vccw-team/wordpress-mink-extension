@@ -11,6 +11,18 @@ class RawWordPressContext extends RawMinkContext
 {
 	protected $timeout = 60;
 
+	protected $parameters; // parameters from the `behat.yml`.
+
+	public function set_params( $params )
+	{
+		$this->parameters = $params;
+	}
+
+	public function get_params()
+	{
+		return $this->parameters;
+	}
+
 	/**
 	 * Log in into the WordPress
 	 *
