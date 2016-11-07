@@ -11,6 +11,18 @@ class RawWordPressContext extends RawMinkContext
 {
 	protected $timeout = 60;
 
+	protected $parameters; // parameters from the `behat.yml`.
+
+	public function set_params( $params )
+	{
+		$this->parameters = $params;
+	}
+
+	public function get_params()
+	{
+		return $this->parameters;
+	}
+
 	/**
 	 * Log in into the WordPress
 	 *
@@ -129,5 +141,37 @@ class RawWordPressContext extends RawMinkContext
 		}
 
 		throw new \Exception( "No html element found for the selector ('$selector')" );
+	}
+
+	/**
+	 * Get the WordPress version from meta.
+	 *
+	 * @return string WordPress versin number.
+	 */
+	protected function get_wp_version()
+	{
+		$this->getSession()->visit( $this->locatePath( '/' ) );
+		$page = $this->getSession()->getPage();
+		$meta = $page->find( 'css', "meta[name=generator]" );
+		if ( $meta ) {
+			$version = $meta->getAttribute( "content" );
+			if ( $version ) {
+				return str_replace( "WordPress ", "", $version );
+			}
+		}
+
+		throw new \Exception( "No version number found" );
+	}
+
+	protected function replace_variables( $str ) {
+		return preg_replace_callback( '/\{([A-Z_]+)\}/', array( $this, '_replace_var' ), $str );
+	}
+
+	private function _replace_var( $matches ) {
+		$cmd = $matches[0];
+		foreach ( array_slice( $matches, 1 ) as $key ) {
+			$cmd = str_replace( '{' . $key . '}', $this->variables[ $key ], $cmd );
+		}
+		return $cmd;
 	}
 }
