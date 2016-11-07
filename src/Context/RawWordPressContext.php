@@ -163,10 +163,22 @@ class RawWordPressContext extends RawMinkContext
 		throw new \Exception( "No version number found" );
 	}
 
+	/**
+	 * Replace with variables
+	 *
+	 * @param string $str The str or {VARIABLE} format text.
+	 * @return string The value of the variable.
+	 */
 	protected function replace_variables( $str ) {
 		return preg_replace_callback( '/\{([A-Z_]+)\}/', array( $this, '_replace_var' ), $str );
 	}
 
+	/**
+	 * Callback of the `replace_variables()`
+	 *
+	 * @param string $str The str or {VARIABLE} format text.
+	 * @return string The value of the variable.
+	 */
 	private function _replace_var( $matches ) {
 		$cmd = $matches[0];
 		foreach ( array_slice( $matches, 1 ) as $key ) {
