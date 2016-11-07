@@ -23,6 +23,28 @@ class WordPressContext extends RawWordPressContext
 	}
 
 	/**
+	 * Check the theme is activated
+	 * Example: Given the "twentysixteen" theme should be activated
+	 *
+	 * @Then /^the "(?P<theme>[^"]*)" theme should be activated$/
+	 */
+	public function theme_should_be_activated( $theme )
+	{
+		$theme = $this->replace_variables( $theme );
+
+		$current = $this->get_current_theme();
+		if ( $theme === $current ) {
+			return true;
+		} else {
+			throw new \Exception( sprintf(
+				"The current theme is %s, but it should be %s",
+				$current,
+				$theme
+			) );
+		}
+	}
+
+	/**
 	 * Check WordPress version
 	 * Example: Given the WordPress version should be "4.6"
 	 *

@@ -144,9 +144,33 @@ class RawWordPressContext extends RawMinkContext
 	}
 
 	/**
+	 * Get the current theme
+	 *
+	 * @return string The slug of the current theme.
+	 */
+	protected function get_current_theme()
+	{
+		if ( ! $this->is_logged_in() ) {
+			throw new \Exception( "You are not logged in" );
+		}
+
+		$this->getSession()->visit( $this->locatePath( '/wp-admin/themes.php' ) );
+		$page = $this->getSession()->getPage();
+		$e = $page->find( 'css', ".theme.active" );
+		if ( $e ) {
+			$theme = $e->getAttribute( "data-slug" );
+			if ( $theme ) {
+				return $theme;
+			}
+		}
+
+		throw new \Exception( "Maybe you don't have permission to get the current theme." );
+	}
+
+	/**
 	 * Get the WordPress version from meta.
 	 *
-	 * @return string WordPress versin number.
+	 * @return string WordPress version number.
 	 */
 	protected function get_wp_version()
 	{
