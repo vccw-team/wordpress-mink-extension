@@ -6,6 +6,11 @@
 [![Latest Unstable Version](https://poser.pugx.org/vccw-team/wordpress-extension/v/unstable)](https://packagist.org/packages/vccw-team/wordpress-extension)
 [![License](https://poser.pugx.org/vccw-team/wordpress-extension/license)](https://packagist.org/packages/vccw-team/wordpress-extension)
 
+## Requires
+
+* WordPress 4.6 or later
+* PHP 5.5 or later
+
 ## Getting Started
 
 The recomended way to install is by using Composer.
