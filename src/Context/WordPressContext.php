@@ -24,6 +24,39 @@ class WordPressContext extends RawWordPressContext
 	}
 
 	/**
+	 * Save env to variable
+	 * Example: Given save env $WP_VERSION as {WP_VERSION}
+	 *
+	 * @Given /^save env \$(?P<env>[a-zA-Z0-9_]+) as \{(?P<var>[a-zA-Z0-9_]+)\}$/
+	 */
+	public function save_env_as_var( $env, $var )
+	{
+		$this->variables[ $var ] = getenv( $env );
+	}
+
+	/**
+	 * Check WordPress version
+	 * Example: Given the WordPress version should be "4.6"
+	 *
+	 * @Given /^the WordPress version should be "(?P<version>[^"]*)"$/
+	 */
+	public function wordpress_version_should_be( $version )
+	{
+		$version = $this->replace_variables( $version );
+
+		$the_version = $this->get_wp_version();
+		if ( 0 === strpos( $the_version, $version ) ) {
+			return true;
+		} else {
+			throw new \Exception( sprintf(
+				"The WordPress version number is %s, but it should be %s",
+				$the_version,
+				$version
+			) );
+		}
+	}
+
+	/**
 	 * Return exception if user haven't logged in
 	 * Example: Then I should have logged in
 	 *
