@@ -58,7 +58,7 @@ class WordPressContext extends RawWordPressContext
 
 	/**
 	 * Return exception if user haven't logged in
-	 * Example: Then I should have logged in
+	 * Example: Then I should be logged in
 	 *
 	 * @Then I should be logged in
 	 */
