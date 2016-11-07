@@ -54,8 +54,8 @@ $ composer install
 Start a WordPress site.
 
 ```
-$ npm run wp-install
-$ npm run wp-start
+$ npm run install-wp
+$ npm run wp
 ```
 
 Run the test!
