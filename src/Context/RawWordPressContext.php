@@ -66,7 +66,7 @@ class RawWordPressContext extends RawMinkContext
 	 */
 	protected function logout()
 	{
-		$this->getSession()->visit( $this->locatePath( '/wp-admin/' ) );
+		$this->getSession()->visit( $this->locatePath( $this->get_admin_url() . '/' ) );
 		if ( ! $this->is_logged_in() ) {
 			return true; // user isn't login.
 		}
@@ -98,16 +98,18 @@ class RawWordPressContext extends RawMinkContext
 	 * @return boolean
 	 *   Returns TRUE if a user is logged in for this session.
 	 */
-	protected function is_logged_in() {
+	protected function is_logged_in()
+	{
 		$session = $this->getSession();
 		$url = $session->getCurrentUrl();
+		$admin_url = $this->get_admin_url() . '/';
 
 		// go to the /wp-admin/
-		$session->visit( $this->locatePath( '/wp-admin/' ) );
+		$session->visit( $this->locatePath( $admin_url ) );
 
 		// if user doesn't login, it should be /wp-login.php
 		$current_url = $session->getCurrentUrl();
-		if ( "/wp-admin/" === substr( $current_url, 0 - strlen( "/wp-admin/" ) ) ) {
+		if ( $admin_url === substr( $current_url, 0 - strlen( $admin_url ) ) ) {
 			$session->visit( $url );
 			return true; // user isn't login.
 		} else {
@@ -154,7 +156,7 @@ class RawWordPressContext extends RawMinkContext
 			throw new \Exception( "You are not logged in" );
 		}
 
-		$this->getSession()->visit( $this->locatePath( '/wp-admin/themes.php' ) );
+		$this->getSession()->visit( $this->locatePath( $this->get_admin_url() . '/themes.php' ) );
 		$page = $this->getSession()->getPage();
 		$e = $page->find( 'css', ".theme.active" );
 		if ( $e ) {
@@ -193,8 +195,21 @@ class RawWordPressContext extends RawMinkContext
 	 * @param string $str The str or {VARIABLE} format text.
 	 * @return string The value of the variable.
 	 */
-	protected function replace_variables( $str ) {
+	protected function replace_variables( $str )
+	{
 		return preg_replace_callback( '/\{([A-Z_]+)\}/', array( $this, '_replace_var' ), $str );
+	}
+
+	/**
+	 * Returns the admin_url from configuration
+	 *
+	 * @param none
+	 * @return string Admin url like `/wp-admin`
+	 */
+	protected function get_admin_url()
+	{
+		$params = $this->get_params();
+		return $params['admin_url'];
 	}
 
 	/**
@@ -203,7 +218,8 @@ class RawWordPressContext extends RawMinkContext
 	 * @param string $str The str or {VARIABLE} format text.
 	 * @return string The value of the variable.
 	 */
-	private function _replace_var( $matches ) {
+	private function _replace_var( $matches )
+	{
 		$cmd = $matches[0];
 		foreach ( array_slice( $matches, 1 ) as $key ) {
 			$cmd = str_replace( '{' . $key . '}', $this->variables[ $key ], $cmd );
