@@ -123,6 +123,8 @@ $ vendor/bin/behat
 
 ### Running tests as npm-scripts
 
+Following is an example to run phantomjs and tests automatically.
+
 Save following as `bin/run-tests.js`.
 
 ```
@@ -150,15 +152,13 @@ Add it to `package.json`.
 
 ```
 {
-  ...
   "scripts": {
     "test": "/usr/bin/env node bin/run-tests.js"
   },
-  ...
 }
 ```
 
-Then run:
+Then just run:
 
 ```
 $ npm test
