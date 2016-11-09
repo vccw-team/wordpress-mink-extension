@@ -57,7 +57,7 @@ default:
             wd_host: http://127.0.0.1:4444/wd/hub
 ```
 
-* Add user accounts of your WordPress site to "VCCW\Behat\Mink\WordPressExtension > roles".
+* Add user accounts of your WordPress site to `VCCW\Behat\Mink\WordPressExtension > roles`.
 * Update value of the `Behat\MinkExtension > base_url` to your hostname.
 
 #### You can add multiple user like following.
