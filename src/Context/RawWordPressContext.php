@@ -20,6 +20,7 @@ class RawWordPressContext extends RawMinkContext
 	 */
 	public function set_params( $params )
 	{
+		// var_dump( $params );
 		$this->parameters = $params;
 	}
 
@@ -59,7 +60,7 @@ class RawWordPressContext extends RawMinkContext
 	 * @param string $user The user name.
 	 * @param string $password The password.
 	 */
-	protected function login( $user, $password )
+	public function login( $user, $password )
 	{
 		$this->logout();
 

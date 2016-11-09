@@ -4,7 +4,7 @@ namespace VCCW\Behat\Mink\WordPressExtension\Context\Initializer;
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\Initializer\ContextInitializer;
-use VCCW\Behat\Mink\WordPressExtension\Context\WordPressContext;
+use VCCW\Behat\Mink\WordPressExtension\Context\RawWordPressContext;
 
 class WordPressInitializer implements ContextInitializer
 {
@@ -27,7 +27,7 @@ class WordPressInitializer implements ContextInitializer
 	 */
 	public function initializeContext( Context $context )
 	{
-		if ( $context instanceof WordPressContext ) {
+		if ( $context instanceof RawWordPressContext ) {
 			$context->set_params( $this->parameters );
 		}
 	}

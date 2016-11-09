@@ -3,13 +3,6 @@
 namespace spec\VCCW\Behat\Mink\WordPressExtension\Context;
 
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
-
-use Behat\Mink\Mink;
-
-use Behat\MinkExtension\Context\RawMinkContext;
-
-use VCCW\Behat\Mink\WordPressExtension\Context\RawWordPressContext;
 
 class RawWordPressContextSpec extends ObjectBehavior
 {
@@ -20,12 +13,18 @@ class RawWordPressContextSpec extends ObjectBehavior
 
 	function it_can_set_and_get_parameters()
 	{
-		$parameters = array(
-            'one' => '1',
-            'two' => '2',
-        );
-        $this->set_params( $parameters );
-        $this->get_params()->shouldReturn( $parameters );
+		$params = json_decode( '{
+			"roles": {
+				"administrator": {
+					"username": "admin",
+					"password": "admin"
+				}
+			},
+			"admin_url": "/wp-admin"
+		}', true );
+
+        $this->set_params( $params );
+        $this->get_params()->shouldReturn( $params );
 	}
 
 	function it_can_replace_var()
