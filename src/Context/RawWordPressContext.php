@@ -10,17 +10,47 @@ use Behat\MinkExtension\Context\RawMinkContext;
 class RawWordPressContext extends RawMinkContext
 {
 	protected $timeout = 60;
+	private $parameters; // parameters from the `behat.yml`.
+	private $variables = array();
 
-	protected $parameters; // parameters from the `behat.yml`.
-
+	/**
+	 * Set parameter form initializer
+	 *
+	 * @param array $params The parameter for this extension.
+	 */
 	public function set_params( $params )
 	{
 		$this->parameters = $params;
 	}
 
+	/**
+	 * Get parameters
+	 *
+	 * @return array The parameter for this extension.
+	 */
 	public function get_params()
 	{
 		return $this->parameters;
+	}
+
+	/**
+	 * Set variables for the senario.
+	 *
+	 * @param string $key The parameter for this extension.
+	 * @param array $params The parameter for this extension.
+	 */
+	public function set_variables( $key, $value )
+	{
+		$this->variables[ $key ] = $value;
+	}
+
+	public function get_variables( $key )
+	{
+		if ( ! empty( $this->variables[ $key ] ) ) {
+			return $this->variables[ $key ];
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -195,9 +225,15 @@ class RawWordPressContext extends RawMinkContext
 	 * @param string $str The str or {VARIABLE} format text.
 	 * @return string The value of the variable.
 	 */
-	protected function replace_variables( $str )
+	public function replace_variables( $str )
 	{
-		return preg_replace_callback( '/\{([A-Z_]+)\}/', array( $this, '_replace_var' ), $str );
+		if ( preg_match( "/^\{([A-Z0-9_]+)\}$/", $str, $matches ) ) {
+			$key = $matches[1];
+			if ( $this->get_variables( $key ) ) {
+				return $this->get_variables( $key );
+			}
+		}
+		return $str;
 	}
 
 	/**
@@ -237,20 +273,5 @@ class RawWordPressContext extends RawMinkContext
 	protected function assertTrue( $condition, $message = '' )
 	{
 		\PHPUnit_Framework_Assert::assertTrue( $condition, $message = '' );
-	}
-
-	/**
-	 * Callback of the `replace_variables()`
-	 *
-	 * @param string $str The str or {VARIABLE} format text.
-	 * @return string The value of the variable.
-	 */
-	private function _replace_var( $matches )
-	{
-		$cmd = $matches[0];
-		foreach ( array_slice( $matches, 1 ) as $key ) {
-			$cmd = str_replace( '{' . $key . '}', $this->variables[ $key ], $cmd );
-		}
-		return $cmd;
 	}
 }

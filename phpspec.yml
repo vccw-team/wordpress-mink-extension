@@ -1,0 +1,4 @@
+suites:
+    main_suite:
+        namespace: VCCW\Behat\Mink\WordPressExtension
+        psr4_prefix: VCCW\Behat\Mink\WordPressExtension

@@ -20,7 +20,7 @@ class WordPressContext extends RawWordPressContext
 	 */
 	public function save_env_as_var( $env, $var )
 	{
-		$this->variables[ $var ] = getenv( $env );
+		$this->set_variables( $var, getenv( $env ) );
 	}
 
 	/**
@@ -115,16 +115,16 @@ class WordPressContext extends RawWordPressContext
 	{
 		$role = $this->replace_variables( $role );
 
-		$p = $this->get_params();
+		$params = $this->get_params();
 
-		if ( empty( $p['roles'][ $role ] ) ) {
+		if ( empty( $params['roles'][ $role ] ) ) {
 			throw new \InvalidArgumentException( sprintf(
 				"Role '%s' is not defined in the `behat.yml`", $role
 			) );
 		} else {
 			$this->login(
-				$p['roles'][ $role ]['username'],
-				$p['roles'][ $role ]['password']
+				$params['roles'][ $role ]['username'],
+				$params['roles'][ $role ]['password']
 			);
 		}
 	}
