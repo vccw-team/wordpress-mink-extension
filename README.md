@@ -78,9 +78,27 @@ https://github.com/vccw-team/wordpress-extension/blob/master/behat.yml.dist
 
 ### Write features
 
+You can write features with Gherkin language.
+
+https://github.com/cucumber/cucumber/wiki/Gherkin
+
 Example `*.feature` are in the following.
 
 https://github.com/vccw-team/wordpress-extension/tree/master/features
+
+#### Examples
+
+Login as the administrator role and I should see "Dashboard".
+
+```
+Feature: I login as the specfic role
+
+  @javascript
+  Scenario: Login as the "administrator" role
+
+    When I login as the "administrator" role
+    Then I should see "Welcome to WordPress!"
+```
 
 ## Contributing
 
