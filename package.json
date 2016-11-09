@@ -3,9 +3,7 @@
   "scripts": {
     "install-wp": "curl https://raw.githubusercontent.com/vccw-team/install-wp/master/install-wp.sh | /usr/bin/env bash",
     "wp": "curl https://raw.githubusercontent.com/vccw-team/install-wp/master/run-wp.sh | /usr/bin/env bash",
-    "phantomjs-start": "phantomjs --webdriver=4444 --ignore-ssl-errors=yes --cookies-file=/tmp/webdriver_cookie.txt > /tmp/webdriver_output.txt &",
-    "phantomjs-stop": "pgrep phantomjs | xargs kill",
-    "test": "vendor/bin/phpspec run && /usr/bin/env node bin/run-tests.js"
+    "test": "/usr/bin/env node bin/run-tests.js"
   },
   "repository": {
     "type": "git",

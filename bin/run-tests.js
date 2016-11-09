@@ -10,9 +10,17 @@ phantomjs.run(
   '--ignore-ssl-errors=yes',
   '--cookies-file=/tmp/webdriver_cookie.txt'
 ).then( program => {
-  const behat = spawn( 'vendor/bin/behat', argv, { stdio: "inherit" } )
-  behat.on( 'exit', ( code ) => {
-    program.kill()
-    process.exit( code );
-  } )
+  const phpspec = spawn( 'vendor/bin/phpspec', ['run'], { stdio: "inherit" } );
+  phpspec.on( 'exit', ( code ) => {
+    if ( code ) {
+      program.kill()
+      process.exit( code );
+    } else {
+      const behat = spawn( 'vendor/bin/behat', argv, { stdio: "inherit" } )
+      behat.on( 'exit', ( code ) => {
+        program.kill()
+        process.exit( code );
+      } )
+    }
+  } );
 } )

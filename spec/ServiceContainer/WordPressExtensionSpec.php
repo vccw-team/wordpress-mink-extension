@@ -3,7 +3,6 @@
 namespace spec\VCCW\Behat\Mink\WordPressExtension\ServiceContainer;
 
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class WordPressExtensionSpec extends ObjectBehavior
 {
