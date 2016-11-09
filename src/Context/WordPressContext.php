@@ -85,7 +85,7 @@ class WordPressContext extends RawWordPressContext
 	 *
 	 * @Then I should be logged in
 	 */
-	public function i_have_loggend_in()
+	public function i_should_be_logged_in()
 	{
 		if ( ! $this->is_logged_in() ) {
 			throw new \Exception( "You haven't logged in" );
