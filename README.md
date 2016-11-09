@@ -100,6 +100,70 @@ Feature: I login as the specfic role
     Then I should see "Welcome to WordPress!"
 ```
 
+Run to see contexts.
+
+```
+$ vendor/bin/behat --di --lang=en
+```
+
+### Install headless browser
+
+Following is an exmaple for PhantomJS.
+
+```
+$ npm install phantomjs --save
+$ node_modules/.bin/phantomjs --webdriver=4444 --ignore-ssl-errors=yes --cookies-file=/tmp/webdriver_cookie.txt
+```
+
+### Run tests
+
+```
+$ vendor/bin/behat
+```
+
+### Running tests as npm-scripts
+
+Save following as `bin/run-tests.js`.
+
+```
+const phantomjs = require( 'phantomjs-prebuilt' )
+const spawn = require( 'child_process' ).spawn
+
+const argv = process.argv
+argv.shift()
+argv.shift()
+
+phantomjs.run(
+  '--webdriver=4444',
+  '--ignore-ssl-errors=yes',
+  '--cookies-file=/tmp/webdriver_cookie.txt'
+).then( program => {
+  const behat = spawn( 'vendor/bin/behat', argv, { stdio: "inherit" } )
+  behat.on( 'exit', ( code ) => {
+    program.kill()
+    process.exit( code );
+  } )
+} )
+```
+
+Add it to `package.json`.
+
+```
+{
+  ...
+  "scripts": {
+    "test": "/usr/bin/env node bin/run-tests.js"
+  },
+  ...
+}
+```
+
+Then run:
+
+```
+$ npm test
+```
+
 ## Contributing
 
 ### Automated Testing
