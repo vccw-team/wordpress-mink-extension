@@ -213,6 +213,33 @@ class RawWordPressContext extends RawMinkContext
 	}
 
 	/**
+	 * Asserts that two variables have the same type and value.
+	 * Used on objects, it asserts that two variables reference
+	 * the same object.
+	 *
+	 * @param mixed  $expected
+	 * @param mixed  $actual
+	 * @param string $message
+	 */
+	protected function assertSame( $expected, $actual, $message = '' )
+	{
+		\PHPUnit_Framework_Assert::assertSame( $expected, $actual, $message = '' );
+	}
+
+	/**
+	 * Asserts that a condition is true.
+	 *
+	 * @param bool   $condition
+	 * @param string $message
+	 *
+	 * @throws PHPUnit_Framework_AssertionFailedError
+	 */
+	protected function assertTrue( $condition, $message = '' )
+	{
+		\PHPUnit_Framework_Assert::assertTrue( $condition, $message = '' );
+	}
+
+	/**
 	 * Callback of the `replace_variables()`
 	 *
 	 * @param string $str The str or {VARIABLE} format text.

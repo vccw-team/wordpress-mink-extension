@@ -13,11 +13,15 @@
 
 ## Getting Started
 
+### Install dependencies
+
 The recomended way to install is by using Composer.
 
 ```
 $ composer require vccw-team/wordpress-extension:@stable
 ```
+
+### Initialize Behat
 
 After that you will be able to initialize the project.
 
@@ -25,9 +29,54 @@ After that you will be able to initialize the project.
 $ vendor/bin/behat --init
 ```
 
-Example of the `behat.yml` is following. You should edit a value of the `base_url`.
+### Configuration
+
+Place the `behat.yml` like following.
+
+```
+default:
+  suites:
+    default:
+      paths:
+        - %paths.base%/features
+      contexts:
+        - FeatureContext
+        - VCCW\Behat\Mink\WordPressExtension\Context\WordPressContext
+        - Behat\MinkExtension\Context\MinkContext
+  extensions:
+    VCCW\Behat\Mink\WordPressExtension:
+      roles:
+        administrator:
+          username: admin
+          password: admin
+    Behat\MinkExtension:
+      base_url: http://127.0.0.1:8080
+      sessions:
+        default:
+          selenium2:
+            wd_host: http://127.0.0.1:4444/wd/hub
+```
+
+* Add user accounts of your WordPress site to "VCCW\Behat\Mink\WordPressExtension > roles".
+* Update value of the `Behat\MinkExtension > base_url` to your hostname.
+
+#### You can add multiple user like following.
+
+```
+  extensions:
+    VCCW\Behat\Mink\WordPressExtension:
+      roles:
+        administrator:
+          username: admin
+          password: admin
+        editor:
+          username: editor
+          password: editor
+```
 
 https://github.com/vccw-team/wordpress-extension/blob/master/behat.yml.dist
+
+### Write features
 
 Example `*.feature` are in the following.
 

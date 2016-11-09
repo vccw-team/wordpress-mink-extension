@@ -32,17 +32,13 @@ class WordPressContext extends RawWordPressContext
 	public function theme_should_be_activated( $theme )
 	{
 		$theme = $this->replace_variables( $theme );
+		$current_theme = $this->get_current_theme();
 
-		$current = $this->get_current_theme();
-		if ( $theme === $current ) {
-			return true;
-		} else {
-			throw new \Exception( sprintf(
-				"The current theme is %s, but it should be %s",
-				$current,
-				$theme
-			) );
-		}
+		$this->assertSame( $theme, $current_theme, sprintf(
+			"The current theme is %s, but it should be %s",
+			$current_theme,
+			$theme
+		) );
 	}
 
 	/**
