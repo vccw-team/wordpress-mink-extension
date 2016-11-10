@@ -9,7 +9,7 @@
 ## Requires
 
 * WordPress 4.6 or later
-* PHP 5.5 or later
+* PHP 5.6 or later
 
 ## Getting Started
 
