@@ -10,17 +10,48 @@ use Behat\MinkExtension\Context\RawMinkContext;
 class RawWordPressContext extends RawMinkContext
 {
 	protected $timeout = 60;
+	private $parameters; // parameters from the `behat.yml`.
+	private $variables = array();
 
-	protected $parameters; // parameters from the `behat.yml`.
-
+	/**
+	 * Set parameter form initializer
+	 *
+	 * @param array $params The parameter for this extension.
+	 */
 	public function set_params( $params )
 	{
+		// var_dump( $params );
 		$this->parameters = $params;
 	}
 
+	/**
+	 * Get parameters
+	 *
+	 * @return array The parameter for this extension.
+	 */
 	public function get_params()
 	{
 		return $this->parameters;
+	}
+
+	/**
+	 * Set variables for the senario.
+	 *
+	 * @param string $key The parameter for this extension.
+	 * @param array $params The parameter for this extension.
+	 */
+	public function set_variables( $key, $value )
+	{
+		$this->variables[ $key ] = $value;
+	}
+
+	public function get_variables( $key )
+	{
+		if ( ! empty( $this->variables[ $key ] ) ) {
+			return $this->variables[ $key ];
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -29,7 +60,7 @@ class RawWordPressContext extends RawMinkContext
 	 * @param string $user The user name.
 	 * @param string $password The password.
 	 */
-	protected function login( $user, $password )
+	public function login( $user, $password )
 	{
 		$this->logout();
 
@@ -66,7 +97,7 @@ class RawWordPressContext extends RawMinkContext
 	 */
 	protected function logout()
 	{
-		$this->getSession()->visit( $this->locatePath( '/wp-admin/' ) );
+		$this->getSession()->visit( $this->locatePath( $this->get_admin_url() . '/' ) );
 		if ( ! $this->is_logged_in() ) {
 			return true; // user isn't login.
 		}
@@ -98,16 +129,18 @@ class RawWordPressContext extends RawMinkContext
 	 * @return boolean
 	 *   Returns TRUE if a user is logged in for this session.
 	 */
-	protected function is_logged_in() {
+	protected function is_logged_in()
+	{
 		$session = $this->getSession();
 		$url = $session->getCurrentUrl();
+		$admin_url = $this->get_admin_url() . '/';
 
 		// go to the /wp-admin/
-		$session->visit( $this->locatePath( '/wp-admin/' ) );
+		$session->visit( $this->locatePath( $admin_url ) );
 
 		// if user doesn't login, it should be /wp-login.php
 		$current_url = $session->getCurrentUrl();
-		if ( "/wp-admin/" === substr( $current_url, 0 - strlen( "/wp-admin/" ) ) ) {
+		if ( $admin_url === substr( $current_url, 0 - strlen( $admin_url ) ) ) {
 			$session->visit( $url );
 			return true; // user isn't login.
 		} else {
@@ -144,9 +177,33 @@ class RawWordPressContext extends RawMinkContext
 	}
 
 	/**
+	 * Get the current theme
+	 *
+	 * @return string The slug of the current theme.
+	 */
+	protected function get_current_theme()
+	{
+		if ( ! $this->is_logged_in() ) {
+			throw new \Exception( "You are not logged in" );
+		}
+
+		$this->getSession()->visit( $this->locatePath( $this->get_admin_url() . '/themes.php' ) );
+		$page = $this->getSession()->getPage();
+		$e = $page->find( 'css', ".theme.active" );
+		if ( $e ) {
+			$theme = $e->getAttribute( "data-slug" );
+			if ( $theme ) {
+				return $theme;
+			}
+		}
+
+		throw new \Exception( "Maybe you don't have permission to get the current theme." );
+	}
+
+	/**
 	 * Get the WordPress version from meta.
 	 *
-	 * @return string WordPress versin number.
+	 * @return string WordPress version number.
 	 */
 	protected function get_wp_version()
 	{
@@ -163,15 +220,59 @@ class RawWordPressContext extends RawMinkContext
 		throw new \Exception( "No version number found" );
 	}
 
-	protected function replace_variables( $str ) {
-		return preg_replace_callback( '/\{([A-Z_]+)\}/', array( $this, '_replace_var' ), $str );
+	/**
+	 * Replace with variables
+	 *
+	 * @param string $str The str or {VARIABLE} format text.
+	 * @return string The value of the variable.
+	 */
+	public function replace_variables( $str )
+	{
+		if ( preg_match( "/^\{([A-Z0-9_]+)\}$/", $str, $matches ) ) {
+			$key = $matches[1];
+			if ( $this->get_variables( $key ) ) {
+				return $this->get_variables( $key );
+			}
+		}
+		return $str;
 	}
 
-	private function _replace_var( $matches ) {
-		$cmd = $matches[0];
-		foreach ( array_slice( $matches, 1 ) as $key ) {
-			$cmd = str_replace( '{' . $key . '}', $this->variables[ $key ], $cmd );
-		}
-		return $cmd;
+	/**
+	 * Returns the admin_url from configuration
+	 *
+	 * @param none
+	 * @return string Admin url like `/wp-admin`
+	 */
+	protected function get_admin_url()
+	{
+		$params = $this->get_params();
+		return $params['admin_url'];
+	}
+
+	/**
+	 * Asserts that two variables have the same type and value.
+	 * Used on objects, it asserts that two variables reference
+	 * the same object.
+	 *
+	 * @param mixed  $expected
+	 * @param mixed  $actual
+	 * @param string $message
+	 */
+	protected function assertSame( $expected, $actual, $message = '' )
+	{
+		\PHPUnit_Framework_Assert::assertSame( $expected, $actual, $message = '' );
+	}
+
+	/**
+	 * Asserts that a condition is true.
+	 *
+	 * @param bool   $condition
+	 * @param string $message
+	 *
+	 * @throws PHPUnit_Framework_AssertionFailedError
+	 */
+	protected function assertTrue( $condition, $message = '' )
+	{
+		\PHPUnit_Framework_Assert::assertTrue( $condition, $message = '' );
 	}
 }

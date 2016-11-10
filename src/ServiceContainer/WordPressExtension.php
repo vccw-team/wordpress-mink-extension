@@ -43,6 +43,9 @@ class WordPressExtension implements ExtensionInterface
 						->end()
 					->end()
 				->end()
+				->scalarNode( 'admin_url' )
+					->defaultValue( '/wp-admin')
+				->end()
 			->end();
 	}
 

@@ -5,5 +5,7 @@ features/
 node_modules/
 npm-debug.log
 package.json
+phpspec.yml
+spec/
 vendor/
 wp-cli-nightly.phar

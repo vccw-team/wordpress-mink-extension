@@ -2,6 +2,7 @@
 
 namespace VCCW\Behat\Mink\WordPressExtension\Context;
 
+use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Gherkin\Node\PyStringNode,
 		Behat\Gherkin\Node\TableNode;
 use Behat\Behat\Hook\Scope\AfterStepScope;
@@ -19,7 +20,25 @@ class WordPressContext extends RawWordPressContext
 	 */
 	public function save_env_as_var( $env, $var )
 	{
-		$this->variables[ $var ] = getenv( $env );
+		$this->set_variables( $var, getenv( $env ) );
+	}
+
+	/**
+	 * Check the theme is activated
+	 * Example: Given the "twentysixteen" theme should be activated
+	 *
+	 * @Then /^the "(?P<theme>[^"]*)" theme should be activated$/
+	 */
+	public function theme_should_be_activated( $theme )
+	{
+		$theme = $this->replace_variables( $theme );
+		$current_theme = $this->get_current_theme();
+
+		$this->assertSame( $theme, $current_theme, sprintf(
+			"The current theme is %s, but it should be %s",
+			$current_theme,
+			$theme
+		) );
 	}
 
 	/**
@@ -58,11 +77,11 @@ class WordPressContext extends RawWordPressContext
 
 	/**
 	 * Return exception if user haven't logged in
-	 * Example: Then I should have logged in
+	 * Example: Then I should be logged in
 	 *
 	 * @Then I should be logged in
 	 */
-	public function i_have_loggend_in()
+	public function i_should_be_logged_in()
 	{
 		if ( ! $this->is_logged_in() ) {
 			throw new \Exception( "You haven't logged in" );
@@ -96,16 +115,16 @@ class WordPressContext extends RawWordPressContext
 	{
 		$role = $this->replace_variables( $role );
 
-		$p = $this->get_params();
+		$params = $this->get_params();
 
-		if ( empty( $p['roles'][ $role ] ) ) {
+		if ( empty( $params['roles'][ $role ] ) ) {
 			throw new \InvalidArgumentException( sprintf(
 				"Role '%s' is not defined in the `behat.yml`", $role
 			) );
 		} else {
 			$this->login(
-				$p['roles'][ $role ]['username'],
-				$p['roles'][ $role ]['password']
+				$params['roles'][ $role ]['username'],
+				$params['roles'][ $role ]['password']
 			);
 		}
 	}
