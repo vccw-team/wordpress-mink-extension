@@ -40,13 +40,12 @@ class WordPressContext extends RawWordPressContext
 
 		foreach ($table->getHash() as $row) {
 			if ( ! empty( $plugins[ $row['slug'] ] ) ) {
-				if ( $row['status'] !== $plugins[ $row['slug'] ]['status'] ) {
-					throw new \Exception( sprintf(
-						"The %s plugin is installed, but it is not %s.",
-						$row['slug'],
-						$row['status']
-					) );
-				}
+				$status = $plugins[ $row['slug'] ]['status'];
+				$this->assertSame( $row['status'], $status, sprintf(
+					"The %s plugin is installed, but it is not %s.",
+					$row['slug'],
+					$row['status']
+				) );
 			} else {
 				throw new \Exception( sprintf(
 					"The %s plugin is not installed.",
@@ -73,12 +72,11 @@ class WordPressContext extends RawWordPressContext
 		}
 
 		if ( "activated" === $expect ) {
-			if ( "active" !== $plugins[ $slug ]['status'] ) {
-				throw new \Exception( sprintf(
-					"The %s plugin is not activated.",
-					$slug
-				) );
-			}
+			$status = $plugins[ $slug ]['status'];
+			$this->assertSame( "active", $status, sprintf(
+				"The %s plugin is installed, but it is not activated.",
+				$slug
+			) );
 		}
 	}
 
@@ -99,12 +97,11 @@ class WordPressContext extends RawWordPressContext
 		}
 
 		if ( "activated" === $expect ) {
-			if ( "active" === $plugins[ $slug ]['status'] ) {
-				throw new \Exception( sprintf(
-					"The %s plugin should not be activated, but activated.",
-					$slug
-				) );
-			}
+			$status = $plugins[ $slug ]['status'];
+			$this->assertTrue( ( "active" !== $status ), sprintf(
+				"The %s plugin should not be activated, but activated.",
+				$slug
+			) );
 		}
 	}
 

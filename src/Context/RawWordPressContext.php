@@ -327,4 +327,17 @@ class RawWordPressContext extends RawMinkContext
 	{
 		\PHPUnit_Framework_Assert::assertTrue( $condition, $message = '' );
 	}
+
+	/**
+	 * Asserts that a condition is false.
+	 *
+	 * @param bool   $condition
+	 * @param string $message
+	 *
+	 * @throws PHPUnit_Framework_AssertionFailedError
+	 */
+	protected function assertFalse( $condition, $message = '' )
+	{
+		\PHPUnit_Framework_Assert::assertFalse( $condition, $message = '' );
+	}
 }
