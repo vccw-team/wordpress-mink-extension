@@ -1,5 +1,4 @@
 {
-  "name": "wordpress-extension",
   "scripts": {
     "install-wp": "curl https://raw.githubusercontent.com/vccw-team/install-wp/master/install-wp.sh | /usr/bin/env bash",
     "wp": "curl https://raw.githubusercontent.com/vccw-team/install-wp/master/run-wp.sh | /usr/bin/env bash",
@@ -7,16 +6,6 @@
     "behat": "/usr/bin/env node bin/run-tests.js",
     "test": "npm run phpspec && npm run behat"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/vccw-team/wordpress-extension.git"
-  },
-  "author": "",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/vccw-team/wordpress-extension/issues"
-  },
-  "homepage": "https://github.com/vccw-team/wordpress-extension#readme",
   "devDependencies": {
     "phantomjs-prebuilt": "^2.1.13"
   }
