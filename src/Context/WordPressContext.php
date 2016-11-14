@@ -24,6 +24,88 @@ class WordPressContext extends RawWordPressContext
 	}
 
 	/**
+	 * Check status of plugins
+	 * Example:
+	 * Then there are plugins:
+	 * | slug               | status   |
+	 * | akismet            | inactive |
+	 * | hello-dolly        | inactive |
+	 * | wordpress-importer | active   |
+	 *
+	 * @then /^plugins should be:$/
+	 */
+	public function there_are_plugins( TableNode $table )
+	{
+		$plugins = $this->get_plugins();
+
+		foreach ($table->getHash() as $row) {
+			if ( ! empty( $plugins[ $row['slug'] ] ) ) {
+				$status = $plugins[ $row['slug'] ]['status'];
+				$this->assertSame( $row['status'], $status, sprintf(
+					"The %s plugin is installed, but it is not %s.",
+					$row['slug'],
+					$row['status']
+				) );
+			} else {
+				throw new \Exception( sprintf(
+					"The %s plugin is not installed.",
+					$row['slug']
+				) );
+			}
+		}
+	}
+
+	/**
+	 * Check status of plugins
+	 *
+	 * @then /^the "(?P<slug>[^"]*)" plugins should be (?P<expect>(installed|activated))$/
+	 */
+	public function the_plugin_should_be( $slug, $expect )
+	{
+		$plugins = $this->get_plugins();
+
+		if ( empty( $plugins[ $slug ] ) ) {
+			throw new \Exception( sprintf(
+				"The %s plugin is not installed.",
+				$slug
+			) );
+		}
+
+		if ( "activated" === $expect ) {
+			$status = $plugins[ $slug ]['status'];
+			$this->assertSame( "active", $status, sprintf(
+				"The %s plugin is installed, but it is not activated.",
+				$slug
+			) );
+		}
+	}
+
+	/**
+	 * Check status of plugins
+	 *
+	 * @then /^the "(?P<slug>[^"]*)" plugins should not be (?P<expect>(installed|activated))$/
+	 */
+	public function the_plugin_should_not_be( $slug, $expect )
+	{
+		$plugins = $this->get_plugins();
+
+		if ( "installed" === $expect && ! empty( $plugins[ $slug ] ) ) {
+			throw new \Exception( sprintf(
+				"The %s plugin should not be installed, but installed.",
+				$slug
+			) );
+		}
+
+		if ( "activated" === $expect ) {
+			$status = $plugins[ $slug ]['status'];
+			$this->assertTrue( ( "active" !== $status ), sprintf(
+				"The %s plugin should not be activated, but activated.",
+				$slug
+			) );
+		}
+	}
+
+	/**
 	 * Check the theme is activated
 	 * Example: Given the "twentysixteen" theme should be activated
 	 *
@@ -76,7 +158,7 @@ class WordPressContext extends RawWordPressContext
 	}
 
 	/**
-	 * Return exception if user haven't logged in
+	 * Return exception if user is not logged in
 	 * Example: Then I should be logged in
 	 *
 	 * @Then I should be logged in
@@ -84,12 +166,26 @@ class WordPressContext extends RawWordPressContext
 	public function i_should_be_logged_in()
 	{
 		if ( ! $this->is_logged_in() ) {
-			throw new \Exception( "You haven't logged in" );
+			throw new \Exception( "You are not logged in" );
+		}
+	}
+
+	/**
+	 * Return exception if user is logged in
+	 * Example: I should not be logged in
+	 *
+	 * @Then I should not be logged in
+	 */
+	public function i_should_not_be_logged_in()
+	{
+		if ( $this->is_logged_in() ) {
+			throw new \Exception( "You are logged in" );
 		}
 	}
 
 	/**
 	 * Login with username and password.
+	 * When you failed to login, it will throw `Exception`.
 	 * Example: Given I login as "admin" width password "admin"
 	 *
 	 * @param string $username The user name.
@@ -101,11 +197,32 @@ class WordPressContext extends RawWordPressContext
 		$username = $this->replace_variables( $username );
 		$password = $this->replace_variables( $password );
 
+		$result = $this->login( $username, $password );
+
+		if ( ! $result ) {
+			throw new \Exception( "Login failed." );
+		}
+	}
+
+	/**
+	 * Login with username and password.
+	 * Example: Given I login as "admin" width password "admin"
+	 *
+	 * @param string $username The user name.
+	 * @param string $password The password for the $username.
+	 * @Given /^I try to login as "(?P<username>(?:[^"]|\\")*)" with password "(?P<password>(?:[^"]|\\")*)"$/
+	 */
+	public function try_to_login_as_user_password( $username, $password )
+	{
+		$username = $this->replace_variables( $username );
+		$password = $this->replace_variables( $password );
+
 		$this->login( $username, $password );
 	}
 
 	/**
 	 * Login as the role like "administrator", It should be defined in the `behat.yml`.
+	 * When you failed to login, it will throw `Exception`.
 	 * Example: Given I login as the "([^"]*)" role
 	 *
 	 * @param string $role The role that is defined in `behat.yml`.
@@ -122,7 +239,35 @@ class WordPressContext extends RawWordPressContext
 				"Role '%s' is not defined in the `behat.yml`", $role
 			) );
 		} else {
-			$this->login(
+			$result = $this->login(
+				$params['roles'][ $role ]['username'],
+				$params['roles'][ $role ]['password']
+			);
+			if ( ! $result ) {
+				throw new \Exception( "Login failed." );
+			}
+		}
+	}
+
+	/**
+	 * Login as the role like "administrator", It should be defined in the `behat.yml`.
+	 * Example: Given I login as the "([^"]*)" role
+	 *
+	 * @param string $role The role that is defined in `behat.yml`.
+	 * @Given /^I try to login as the "(?P<role>[a-zA-Z]*)" role$/
+	 */
+	public function try_to_login_as_the_role( $role )
+	{
+		$role = $this->replace_variables( $role );
+
+		$params = $this->get_params();
+
+		if ( empty( $params['roles'][ $role ] ) ) {
+			throw new \InvalidArgumentException( sprintf(
+				"Role '%s' is not defined in the `behat.yml`", $role
+			) );
+		} else {
+			$result = $this->login(
 				$params['roles'][ $role ]['username'],
 				$params['roles'][ $role ]['password']
 			);

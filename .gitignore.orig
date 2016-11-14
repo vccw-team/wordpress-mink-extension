@@ -1,0 +1,15 @@
+<<<<<<< HEAD
+.travis.yml
+behat.yml.dist
+bin/
+features/
+=======
+behat.yml
+>>>>>>> master
+node_modules/
+npm-debug.log
+package.json
+phpspec.yml
+spec/
+vendor/
+wp-cli-nightly.phar
