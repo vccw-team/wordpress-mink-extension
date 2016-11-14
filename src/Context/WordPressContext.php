@@ -76,7 +76,7 @@ class WordPressContext extends RawWordPressContext
 	}
 
 	/**
-	 * Return exception if user haven't logged in
+	 * Return exception if user is not logged in
 	 * Example: Then I should be logged in
 	 *
 	 * @Then I should be logged in
@@ -84,7 +84,20 @@ class WordPressContext extends RawWordPressContext
 	public function i_should_be_logged_in()
 	{
 		if ( ! $this->is_logged_in() ) {
-			throw new \Exception( "You haven't logged in" );
+			throw new \Exception( "You are not logged in" );
+		}
+	}
+
+	/**
+	 * Return exception if user is logged in
+	 * Example: I should not be logged in
+	 *
+	 * @Then I should not be logged in
+	 */
+	public function i_should_not_be_logged_in()
+	{
+		if ( $this->is_logged_in() ) {
+			throw new \Exception( "You are logged in" );
 		}
 	}
 

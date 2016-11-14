@@ -67,8 +67,6 @@ class RawWordPressContext extends RawMinkContext
 	 */
 	public function login( $user, $password )
 	{
-		$this->logout();
-
 		$this->getSession()->visit( $this->locatePath( '/wp-login.php' ) );
 		$this->wait_the_element( "#loginform" );
 
@@ -106,6 +104,7 @@ class RawWordPressContext extends RawMinkContext
 	protected function is_current_url( $url )
 	{
 		$current_url = $this->getSession()->getCurrentUrl();
+
 		if ( $url === substr( $current_url, 0 - strlen( $url ) ) ) {
 			return true;
 		} else {
@@ -120,12 +119,13 @@ class RawWordPressContext extends RawMinkContext
 	 */
 	protected function logout()
 	{
-		$this->getSession()->visit( $this->locatePath( $this->get_admin_url() . '/' ) );
 		if ( ! $this->is_logged_in() ) {
-			return true; // user isn't login.
+			return; // user isn't login.
 		}
+
 		$page = $this->getSession()->getPage();
 		$logout = $page->find( "css", "#wp-admin-bar-logout a" );
+
 		if ( ! empty( $logout ) ) {
 			$this->getSession()->visit( $this->locatePath( $logout->getAttribute( "href" ) ) );
 
@@ -154,20 +154,14 @@ class RawWordPressContext extends RawMinkContext
 	 */
 	protected function is_logged_in()
 	{
-		$session = $this->getSession();
-		$url = $session->getCurrentUrl();
-		$admin_url = $this->get_admin_url() . '/';
-
-		// go to the /wp-admin/
-		$session->visit( $this->locatePath( $admin_url ) );
-
-		if ( $this->is_current_url( $admin_url ) ) {
-			$session->visit( $url );
-			return true; // user isn't login.
-		} else {
-			$session->visit( $url );
-			return false;
+		$page = $this->getSession()->getPage();
+		if ( $page->find( "css", ".logged-in" ) ) {
+			return true;
+		} elseif ( $page->find( "css", ".wp-admin" ) ) {
+			return true;
 		}
+
+		return false;
 	}
 
 	/**

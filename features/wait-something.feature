@@ -14,5 +14,5 @@ Feature: I wait something happen
     Then I should see "Welcome"
 
     When I am on "/"
-    And I wait for 5 seconds
+    And I wait for 2 seconds
     Then I should see "Welcome"
