@@ -24,6 +24,91 @@ class WordPressContext extends RawWordPressContext
 	}
 
 	/**
+	 * Check status of plugins
+	 * Example:
+	 * Then there are plugins:
+	 * | slug               | status   |
+	 * | akismet            | inactive |
+	 * | hello-dolly        | inactive |
+	 * | wordpress-importer | active   |
+	 *
+	 * @then /^plugins should be:$/
+	 */
+	public function there_are_plugins( TableNode $table )
+	{
+		$plugins = $this->get_plugins();
+
+		foreach ($table->getHash() as $row) {
+			if ( ! empty( $plugins[ $row['slug'] ] ) ) {
+				if ( $row['status'] !== $plugins[ $row['slug'] ]['status'] ) {
+					throw new \Exception( sprintf(
+						"The %s plugin is installed, but it is not %s.",
+						$row['slug'],
+						$row['status']
+					) );
+				}
+			} else {
+				throw new \Exception( sprintf(
+					"The %s plugin is not installed.",
+					$row['slug']
+				) );
+			}
+		}
+	}
+
+	/**
+	 * Check status of plugins
+	 *
+	 * @then /^the "(?P<slug>[^"]*)" plugins should be (?P<expect>(installed|activated))$/
+	 */
+	public function the_plugin_should_be( $slug, $expect )
+	{
+		$plugins = $this->get_plugins();
+
+		if ( empty( $plugins[ $slug ] ) ) {
+			throw new \Exception( sprintf(
+				"The %s plugin is not installed.",
+				$slug
+			) );
+		}
+
+		if ( "activated" === $expect ) {
+			if ( "active" !== $plugins[ $slug ]['status'] ) {
+				throw new \Exception( sprintf(
+					"The %s plugin is not activated.",
+					$slug
+				) );
+			}
+		}
+	}
+
+	/**
+	 * Check status of plugins
+	 *
+	 * @then /^the "(?P<slug>[^"]*)" plugins should not be (?P<expect>(installed|activated))$/
+	 */
+	public function the_plugin_should_not_be( $slug, $expect )
+	{
+		$plugins = $this->get_plugins();
+
+		if ( "installed" === $expect && ! empty( $plugins[ $slug ] ) ) {
+			throw new \Exception( sprintf(
+				"The %s plugin should not be installed, but installed.",
+				$slug
+			) );
+		}
+
+		if ( "activated" === $expect ) {
+			if ( "active" === $plugins[ $slug ]['status'] ) {
+				throw new \Exception( sprintf(
+					"The %s plugin should not be activated, but activated.",
+					$slug
+				) );
+			}
+		}
+	}
+
+	/**
 	 * Check the theme is activated
 	 * Example: Given the "twentysixteen" theme should be activated
 	 *
