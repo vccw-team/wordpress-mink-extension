@@ -1,6 +1,5 @@
 Feature: The screen size
 
-  @javascript
   Scenario: The screen size is 1440x900
     Given I am on "/wp-admin/"
     And I login as the "administrator" role

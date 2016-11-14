@@ -90,6 +90,7 @@ class WordPressContext extends RawWordPressContext
 
 	/**
 	 * Login with username and password.
+	 * When you failed to login, it will throw `Exception`.
 	 * Example: Given I login as "admin" width password "admin"
 	 *
 	 * @param string $username The user name.
@@ -101,11 +102,32 @@ class WordPressContext extends RawWordPressContext
 		$username = $this->replace_variables( $username );
 		$password = $this->replace_variables( $password );
 
+		$result = $this->login( $username, $password );
+
+		if ( ! $result ) {
+			throw new \Exception( "Login failed." );
+		}
+	}
+
+	/**
+	 * Login with username and password.
+	 * Example: Given I login as "admin" width password "admin"
+	 *
+	 * @param string $username The user name.
+	 * @param string $password The password for the $username.
+	 * @Given /^I try to login as "(?P<username>(?:[^"]|\\")*)" with password "(?P<password>(?:[^"]|\\")*)"$/
+	 */
+	public function try_to_login_as_user_password( $username, $password )
+	{
+		$username = $this->replace_variables( $username );
+		$password = $this->replace_variables( $password );
+
 		$this->login( $username, $password );
 	}
 
 	/**
 	 * Login as the role like "administrator", It should be defined in the `behat.yml`.
+	 * When you failed to login, it will throw `Exception`.
 	 * Example: Given I login as the "([^"]*)" role
 	 *
 	 * @param string $role The role that is defined in `behat.yml`.
@@ -122,7 +144,35 @@ class WordPressContext extends RawWordPressContext
 				"Role '%s' is not defined in the `behat.yml`", $role
 			) );
 		} else {
-			$this->login(
+			$result = $this->login(
+				$params['roles'][ $role ]['username'],
+				$params['roles'][ $role ]['password']
+			);
+			if ( ! $result ) {
+				throw new \Exception( "Login failed." );
+			}
+		}
+	}
+
+	/**
+	 * Login as the role like "administrator", It should be defined in the `behat.yml`.
+	 * Example: Given I login as the "([^"]*)" role
+	 *
+	 * @param string $role The role that is defined in `behat.yml`.
+	 * @Given /^I try to login as the "(?P<role>[a-zA-Z]*)" role$/
+	 */
+	public function try_to_login_as_the_role( $role )
+	{
+		$role = $this->replace_variables( $role );
+
+		$params = $this->get_params();
+
+		if ( empty( $params['roles'][ $role ] ) ) {
+			throw new \InvalidArgumentException( sprintf(
+				"Role '%s' is not defined in the `behat.yml`", $role
+			) );
+		} else {
+			$result = $this->login(
 				$params['roles'][ $role ]['username'],
 				$params['roles'][ $role ]['password']
 			);

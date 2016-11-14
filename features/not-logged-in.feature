@@ -1,6 +1,5 @@
 Feature: Logout from the WordPress
 
-  @javascript
   Scenario: Logout
 
     Given the screen size is 1440x900
@@ -9,7 +8,6 @@ Feature: Logout from the WordPress
     When I logout
     Then I should see "You are now logged out."
 
-  @javascript
   Scenario: I am a anonymous
 
     Given the screen size is 1440x900

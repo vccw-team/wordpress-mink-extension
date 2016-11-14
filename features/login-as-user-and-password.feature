@@ -1,6 +1,5 @@
 Feature: I login as the specfic role
 
-  @javascript
   Scenario: Login as user "admin" with password "admin"
 
     Given the screen size is 1440x900
@@ -20,5 +19,5 @@ Feature: I login as the specfic role
 
   Scenario: Login as user "admin" with incorrect password
 
-    When I login as "admin" with password "1111"
+    When I try to login as "admin" with password "1111"
     Then I should see "ERROR:"

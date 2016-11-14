@@ -38,13 +38,18 @@ class RawWordPressContext extends RawMinkContext
 	 * Set variables for the senario.
 	 *
 	 * @param string $key The parameter for this extension.
-	 * @param array $params The parameter for this extension.
 	 */
 	public function set_variables( $key, $value )
 	{
 		$this->variables[ $key ] = $value;
 	}
 
+	/**
+	 * Get variables for the senario.
+	 *
+	 * @param string $key The parameter for this extension.
+	 * @return array The value of the variable.
+	 */
 	public function get_variables( $key )
 	{
 		if ( ! empty( $this->variables[ $key ] ) ) {
@@ -76,9 +81,11 @@ class RawWordPressContext extends RawMinkContext
 
 		for ( $i = 0; $i < $this->timeout; $i++ ) {
 			try {
-				$page = $this->getSession()->getPage();
-				if ( $page->find( 'css', "body.wp-core-ui" ) ) {
+				$admin_url = $this->get_admin_url() . '/';
+				if ( $this->is_current_url( $admin_url ) ) {
 					return true;
+				} else {
+					return false;
 				}
 			} catch ( \Exception $e ) {
 				// do nothing
@@ -88,6 +95,22 @@ class RawWordPressContext extends RawMinkContext
 		}
 
 		throw new \Exception( 'Login timeout' );
+	}
+
+	/**
+	 * Retrun true when I am at `$url`.
+	 *
+	 * @param string $url The URL where I should be.
+	 * @return bool Return true when I am at `$url`.
+	 */
+	protected function is_current_url( $url )
+	{
+		$current_url = $this->getSession()->getCurrentUrl();
+		if ( $url === substr( $current_url, 0 - strlen( $url ) ) ) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -138,9 +161,7 @@ class RawWordPressContext extends RawMinkContext
 		// go to the /wp-admin/
 		$session->visit( $this->locatePath( $admin_url ) );
 
-		// if user doesn't login, it should be /wp-login.php
-		$current_url = $session->getCurrentUrl();
-		if ( $admin_url === substr( $current_url, 0 - strlen( $admin_url ) ) ) {
+		if ( $this->is_current_url( $admin_url ) ) {
 			$session->visit( $url );
 			return true; // user isn't login.
 		} else {

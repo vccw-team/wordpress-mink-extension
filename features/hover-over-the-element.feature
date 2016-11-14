@@ -1,6 +1,5 @@
 Feature: Hover over the element
 
-  @javascript
   Scenario: I hover over the specific element
 
     Given the screen size is 1440x900

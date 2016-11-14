@@ -1,6 +1,5 @@
 Feature: Take the screenshot
 
-  @javascript
   Scenario: Take the screenshot of the current page
 
     Given the screen size is 1440x900

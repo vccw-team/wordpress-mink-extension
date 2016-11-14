@@ -1,6 +1,5 @@
 Feature: Get current theme
 
-  @javascript
   Scenario: Get current theme
 
     When I login as the "administrator" role

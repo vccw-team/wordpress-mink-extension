@@ -1,6 +1,5 @@
 Feature: I wait something happen
 
-  @javascript
   Scenario: I wait the specific element be loaded
 
     Given the screen size is 1440x900

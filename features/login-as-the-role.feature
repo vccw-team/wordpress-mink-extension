@@ -1,6 +1,5 @@
 Feature: I login as the specfic role
 
-  @javascript
   Scenario: Login as the "administrator" role
 
     Given the screen size is 1440x900
