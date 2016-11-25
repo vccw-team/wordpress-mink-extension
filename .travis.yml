@@ -6,7 +6,7 @@ php:
 
 env:
   matrix:
-    - WP_VERSION=nightly WP_THEME=twentyseventeen
+    - WP_VERSION=nightly WP_THEME=twentysixteen
     - WP_VERSION=latest WP_THEME=twentysixteen
 
 before_install:
