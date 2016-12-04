@@ -103,7 +103,7 @@ Feature: I login as the specfic role
 Run to see contexts.
 
 ```
-$ vendor/bin/behat --di --lang=en
+$ vendor/bin/behat -di --lang=en
 ```
 
 ### Install headless browser
