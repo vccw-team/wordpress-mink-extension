@@ -106,6 +106,19 @@ class WordPressContext extends RawWordPressContext
 	}
 
 	/**
+	 * Activate plugin
+	 *
+	 * @then /^I activate the "(?P<slug>[^"]*)" plugin$/
+	 */
+	public function i_activate_the_plugin($slug) {
+		$session = $this->getSession();
+		$session->visit( $this->locatePath( $this->get_admin_url() . '/plugins.php' ) );
+		$page = $session->getPage();
+		$page->checkField('[@data-slug="' . $slug . '"] > th > input"');
+		$page->pressButton('#doaction');
+	}
+
+	/**
 	 * Check the theme is activated
 	 * Example: Given the "twentysixteen" theme should be activated
 	 *
