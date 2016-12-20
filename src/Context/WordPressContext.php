@@ -116,9 +116,9 @@ class WordPressContext extends RawWordPressContext
 		$page = $session->getPage();
 		$optionElement = $page->find('css', '[data-slug="' . $slug . '"] > th > input');
 		$optionElement->click();
-		$selectElement = $page->find('css', '#bulk-action-selector-top');
+		$selectElement = $page->find('css', '#bulk-action-selector-bottom');
 		$selectElement->selectOption('activate-selected');
-		$page->find('css', '#doaction')->click();
+		$page->find('css', '#doaction2')->click();
 	}
 
 	/**
