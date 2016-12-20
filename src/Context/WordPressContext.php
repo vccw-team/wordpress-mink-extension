@@ -114,8 +114,11 @@ class WordPressContext extends RawWordPressContext
 		$session = $this->getSession();
 		$session->visit( $this->locatePath( $this->get_admin_url() . '/plugins.php' ) );
 		$page = $session->getPage();
-		$page->checkField('[@data-slug="' . $slug . '"] > th > input"');
-		$page->pressButton('#doaction');
+		$optionElement = $page->find('css', '[data-slug="' . $slug . '"] > th > input');
+		$optionElement->click();
+		$selectElement = $page->find('css', '#bulk-action-selector-top');
+		$selectElement->selectOption('activate-selected');
+		$page->find('css', '#doaction')->click();
 	}
 
 	/**
