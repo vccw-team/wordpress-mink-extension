@@ -373,9 +373,6 @@ class RawWordPressContext extends RawMinkContext
 		$current_url = $this->getSession()->getCurrentUrl();
 
 		$goutteClient = new \Behat\Mink\Driver\Goutte\Client();
-		$guzzleClient = new \GuzzleHttp\Client();
-		$goutteClient->setClient($guzzleClient);
-
 		$driver = new \Behat\Mink\Driver\GoutteDriver( $goutteClient );
 		$session = new \Behat\Mink\Session( $driver );
 		$session->start();
