@@ -71,6 +71,17 @@ class RawWordPressContext extends RawMinkContext
 	}
 
 	/**
+	 * Get http response headers from the current page.
+	 *
+	 * @return array HTTP response headers.
+	 */
+	protected function get_http_headers()
+	{
+		$session = $this->get_goutte_session();
+		return $session->getResponseHeaders();
+	}
+
+	/**
 	 * Log in into the WordPress
 	 *
 	 * @param string $user The user name.
