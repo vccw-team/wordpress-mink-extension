@@ -8,4 +8,5 @@ package.json
 phpspec.yml
 spec/
 vendor/
+wp-cli.yml
 wp-cli-nightly.phar

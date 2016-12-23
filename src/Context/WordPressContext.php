@@ -13,7 +13,7 @@ use Behat\Behat\Hook\Scope\AfterStepScope;
 class WordPressContext extends RawWordPressContext
 {
 	/**
-	 * Save env to variable
+	 * Save env to variable.
 	 * Example: Given save env $WP_VERSION as {WP_VERSION}
 	 *
 	 * @Given /^save env \$(?P<env>[A-Z_]+) as \{(?P<var>[A-Z_]+)\}$/
@@ -24,21 +24,71 @@ class WordPressContext extends RawWordPressContext
 	}
 
 	/**
+	 * Check http status code.
+	 * Example: Given save env $WP_VERSION as {WP_VERSION}
+	 *
+	 * @then /^the HTTP status should be (?P<expect>[0-9]+)$/
+	 */
+	public function the_http_status_should_be( $expect )
+	{
+		$status = $this->get_http_status();
+		$this->assertSame( $status, intval( $expect ), sprintf(
+			'The HTTP status is %1$s, but it should be %2$s',
+			$status,
+			$expect
+		) );
+	}
+
+	/**
+	 * Check HTTP response headers.
+	 * Example:
+	 * Then the HTTP headers should be:
+     *   | header        | value                    |
+     *   | Content-Type  | text/html; charset=UTF-8 |
+     *   | Connection    | close                    |
+     *   | Host          | 127.0.0.1:8080           |
+	 *
+	 * @then /^the HTTP headers should be:$/
+	 */
+	public function the_http_headers_should_be( TableNode $table )
+	{
+		$headers = $this->get_http_headers();
+
+		foreach ( $table->getHash() as $row ) {
+			if ( ! empty( $headers[ $row['header'] ] ) ) {
+				$value = $headers[ $row['header'] ][0];
+				$this->assertSame( $row['value'], $value, sprintf(
+					'The value of "%1$s" header is "%1$s", but it should be "%3$s".',
+					$row['header'],
+					$value,
+					$row['value']
+				) );
+			} else {
+				throw new \Exception( sprintf(
+					'The value of "%1$s" header is empty, but it should be "%2$s".',
+					$row['header'],
+					$row['value']
+				) );
+			}
+		}
+	}
+
+	/**
 	 * Check status of plugins
 	 * Example:
-	 * Then there are plugins:
+	 * Then the plugins should be:
 	 * | slug               | status   |
 	 * | akismet            | inactive |
 	 * | hello-dolly        | inactive |
 	 * | wordpress-importer | active   |
 	 *
-	 * @then /^plugins should be:$/
+	 * @then /^the plugins should be:$/
 	 */
-	public function there_are_plugins( TableNode $table )
+	public function the_plugins_should_be( TableNode $table )
 	{
 		$plugins = $this->get_plugins();
 
-		foreach ($table->getHash() as $row) {
+		foreach ( $table->getHash() as $row ) {
 			if ( ! empty( $plugins[ $row['slug'] ] ) ) {
 				$status = $plugins[ $row['slug'] ]['status'];
 				$this->assertSame( $row['status'], $status, sprintf(
@@ -56,9 +106,9 @@ class WordPressContext extends RawWordPressContext
 	}
 
 	/**
-	 * Check status of plugins
+	 * Check status of plugins.
 	 *
-	 * @then /^the "(?P<slug>[^"]*)" plugins should be (?P<expect>(installed|activated))$/
+	 * @then /^the "(?P<slug>[^"]*)" plugin should be (?P<expect>(installed|activated))$/
 	 */
 	public function the_plugin_should_be( $slug, $expect )
 	{
@@ -81,9 +131,9 @@ class WordPressContext extends RawWordPressContext
 	}
 
 	/**
-	 * Check status of plugins
+	 * Check status of plugins.
 	 *
-	 * @then /^the "(?P<slug>[^"]*)" plugins should not be (?P<expect>(installed|activated))$/
+	 * @then /^the "(?P<slug>[^"]*)" plugin should not be (?P<expect>(installed|activated))$/
 	 */
 	public function the_plugin_should_not_be( $slug, $expect )
 	{
@@ -106,7 +156,7 @@ class WordPressContext extends RawWordPressContext
 	}
 
 	/**
-	 * Check the theme is activated
+	 * Check the theme is activated.
 	 * Example: Given the "twentysixteen" theme should be activated
 	 *
 	 * @Then /^the "(?P<theme>[^"]*)" theme should be activated$/
@@ -124,7 +174,7 @@ class WordPressContext extends RawWordPressContext
 	}
 
 	/**
-	 * Check WordPress version
+	 * Check WordPress version.
 	 * Example: Given the WordPress version should be "4.6"
 	 *
 	 * @Given /^the WordPress version should be "(?P<version>[^"]*)"$/
@@ -158,7 +208,7 @@ class WordPressContext extends RawWordPressContext
 	}
 
 	/**
-	 * Return exception if user is not logged in
+	 * Return exception if user is not logged-in.
 	 * Example: Then I should be logged in
 	 *
 	 * @Then I should be logged in
@@ -171,7 +221,7 @@ class WordPressContext extends RawWordPressContext
 	}
 
 	/**
-	 * Return exception if user is logged in
+	 * Return exception if user is logged-in.
 	 * Example: I should not be logged in
 	 *
 	 * @Then I should not be logged in

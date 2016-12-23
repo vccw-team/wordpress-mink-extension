@@ -60,6 +60,28 @@ class RawWordPressContext extends RawMinkContext
 	}
 
 	/**
+	 * Get http status code from the current page.
+	 *
+	 * @return int HTTP status code.
+	 */
+	protected function get_http_status()
+	{
+		$session = $this->get_goutte_session();
+		return intval( $session->getStatusCode() );
+	}
+
+	/**
+	 * Get http response headers from the current page.
+	 *
+	 * @return array HTTP response headers.
+	 */
+	protected function get_http_headers()
+	{
+		$session = $this->get_goutte_session();
+		return $session->getResponseHeaders();
+	}
+
+	/**
 	 * Log in into the WordPress
 	 *
 	 * @param string $user The user name.
@@ -339,5 +361,26 @@ class RawWordPressContext extends RawMinkContext
 	protected function assertFalse( $condition, $message = '' )
 	{
 		\PHPUnit_Framework_Assert::assertFalse( $condition, $message = '' );
+	}
+
+	/**
+	 * Create and return session with goutte driver.
+	 *
+	 * @return object The session object of a goutte driver.
+	 */
+	protected function get_goutte_session()
+	{
+		$current_url = $this->getSession()->getCurrentUrl();
+
+		$goutteClient = new \Behat\Mink\Driver\Goutte\Client();
+		$guzzleClient = new \GuzzleHttp\Client();
+		$goutteClient->setClient($guzzleClient);
+
+		$driver = new \Behat\Mink\Driver\GoutteDriver( $goutteClient );
+		$session = new \Behat\Mink\Session( $driver );
+		$session->start();
+		$session->visit( $current_url );
+
+		return $session;
 	}
 }
