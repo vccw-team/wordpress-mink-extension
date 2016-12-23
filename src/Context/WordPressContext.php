@@ -24,6 +24,22 @@ class WordPressContext extends RawWordPressContext
 	}
 
 	/**
+	 * Check http status code.
+	 * Example: Given save env $WP_VERSION as {WP_VERSION}
+	 *
+	 * @then /^the HTTP status should be (?P<expect>[0-9]+)$/
+	 */
+	public function the_http_status_should_be( $expect )
+	{
+		$status = $this->get_http_status();
+		$this->assertSame( $status, intval( $expect ), sprintf(
+			'The HTTP status is %1$s, but it should be %2$s',
+			$status,
+			$expect
+		) );
+	}
+
+	/**
 	 * Check status of plugins
 	 * Example:
 	 * Then there are plugins:
