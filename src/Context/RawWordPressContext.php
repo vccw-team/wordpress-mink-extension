@@ -62,13 +62,12 @@ class RawWordPressContext extends RawMinkContext
 	/**
 	 * Get http status code from the current page.
 	 *
-	 * @param string $user The user name.
-	 * @param string $password The password.
+	 * @return int HTTP status code.
 	 */
 	protected function get_http_status()
 	{
 		$session = $this->get_goutte_session();
-		return $session->getStatusCode();
+		return intval( $session->getStatusCode() );
 	}
 
 	/**
@@ -353,6 +352,11 @@ class RawWordPressContext extends RawMinkContext
 		\PHPUnit_Framework_Assert::assertFalse( $condition, $message = '' );
 	}
 
+	/**
+	 * Create and return session with goutte driver.
+	 *
+	 * @return object The session object of a goutte driver.
+	 */
 	protected function get_goutte_session()
 	{
 		$current_url = $this->getSession()->getCurrentUrl();
