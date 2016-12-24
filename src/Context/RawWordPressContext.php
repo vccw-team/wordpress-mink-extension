@@ -72,16 +72,15 @@ class RawWordPressContext extends RawMinkContext
 	/**
 	 * Get http status code from the current page.
 	 *
+	 * @param string $url    The URL.
 	 * @param string $method The request method. Default is 'GET'.
 	 * @param array  $params An array for the request.
 	 * @return int HTTP status code.
 	 */
-	protected function get_http_status( $method = 'GET', $params = array() )
+	protected function get_http_status( $url, $method = 'GET', $params = array() )
 	{
-		$this->getSession()->wait( 1 * 1000 );
-		$current_url = $this->getSession()->getCurrentUrl();
 		$params = $params + $this->guzzle_params;
-		$response = $this->guzzle->request( $method, $current_url, $params );
+		$response = $this->guzzle->request( $method, $url, $params );
 
 		return intval( $response->getStatusCode() );
 	}
@@ -89,7 +88,7 @@ class RawWordPressContext extends RawMinkContext
 	/**
 	 * Get contents from $url.
 	 *
-	 * @param string $url    The url.
+	 * @param string $url    The URL.
 	 * @param string $method The request method. Default is 'GET'.
 	 * @param array  $params An array for the request.
 	 * @return string The contents.
@@ -105,16 +104,15 @@ class RawWordPressContext extends RawMinkContext
 	/**
 	 * Get http response headers from the current page.
 	 *
+	 * @param string $url    The URL.
 	 * @param string $method The request method. Default is 'GET'.
 	 * @param array  $params An array for the request.
 	 * @return array HTTP response headers.
 	 */
-	protected function get_http_headers( $method = 'GET', $params = array() )
+	protected function get_http_headers( $url, $method = 'GET', $params = array() )
 	{
-		$this->getSession()->wait( 1 * 1000 );
-		$current_url = $this->getSession()->getCurrentUrl();
 		$params = $params + $this->guzzle_params;
-		$response = $this->guzzle->request( $method, $current_url, $params );
+		$response = $this->guzzle->request( $method, $url, $params );
 
 		return $response->getHeaders();
 	}

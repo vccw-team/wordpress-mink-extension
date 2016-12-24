@@ -32,7 +32,9 @@ class WordPressContext extends RawWordPressContext
 	 */
 	public function the_http_status_should_be( $expect )
 	{
-		$status = $this->get_http_status();
+		$this->getSession()->wait( 3 * 1000 );
+		$current_url = $this->getSession()->getCurrentUrl();
+		$status = $this->get_http_status( $current_url );
 		$this->assertSame( $status, intval( $expect ), sprintf(
 			'The HTTP status is %1$s, but it should be %2$s',
 			$status,
@@ -50,10 +52,14 @@ class WordPressContext extends RawWordPressContext
      *   | Host          | 127.0.0.1:8080           |
 	 *
 	 * @then /^the HTTP headers should be:$/
+	 * @param TableNode $table The TableNode object.
+	 * @throws \Exception
 	 */
 	public function the_http_headers_should_be( TableNode $table )
 	{
-		$headers = $this->get_http_headers();
+		$this->getSession()->wait( 3 * 1000 );
+		$current_url = $this->getSession()->getCurrentUrl();
+		$headers = $this->get_http_headers( $current_url );
 
 		foreach ( $table->getHash() as $row ) {
 			if ( ! empty( $headers[ $row['header'] ] ) ) {
