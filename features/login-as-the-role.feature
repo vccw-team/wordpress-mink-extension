@@ -23,3 +23,12 @@ Feature: I login as the specfic role
 
     When I am on "/wp-admin/plugins.php"
     Then I should see "Sorry, you are not allowed to access this page."
+
+  @mink:goutte
+  Scenario: Login as the "editor" role with goutte driver
+
+    When I login as the "editor" role
+    Then I should see "Dashboard"
+
+    When I am on "/wp-admin/plugins.php"
+    Then I should see "Sorry, you are not allowed to access this page."
