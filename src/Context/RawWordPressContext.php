@@ -78,6 +78,7 @@ class RawWordPressContext extends RawMinkContext
 	 */
 	protected function get_http_status( $method = 'GET', $params = array() )
 	{
+		$this->getSession()->wait( 1 * 1000 );
 		$current_url = $this->getSession()->getCurrentUrl();
 		$params = $params + $this->guzzle_params;
 		$response = $this->guzzle->request( $method, $current_url, $params );
@@ -110,6 +111,7 @@ class RawWordPressContext extends RawMinkContext
 	 */
 	protected function get_http_headers( $method = 'GET', $params = array() )
 	{
+		$this->getSession()->wait( 1 * 1000 );
 		$current_url = $this->getSession()->getCurrentUrl();
 		$params = $params + $this->guzzle_params;
 		$response = $this->guzzle->request( $method, $current_url, $params );
