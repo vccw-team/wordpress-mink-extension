@@ -72,26 +72,31 @@ class RawWordPressContext extends RawMinkContext
 	/**
 	 * Get http status code from the current page.
 	 *
-	 * @param string $url    The URL.
-	 * @param string $method The request method. Default is 'GET'.
-	 * @param array  $params An array for the request.
 	 * @return int HTTP status code.
 	 */
-	protected function get_http_status( $url, $method = 'GET', $params = array() )
+	protected function get_http_status()
 	{
-		$params = $params + $this->guzzle_params;
-		$params['stream'] = true;
-		$response = $this->guzzle->request( $method, $url, $params );
+		$session = $this->getSession();
+		return intval( $session->getStatusCode() );
+	}
 
-		return intval( $response->getStatusCode() );
+	/**
+	 * Get http response headers from the current page.
+	 *
+	 * @return array HTTP response headers.
+	 */
+	protected function get_http_headers()
+	{
+		$session = $this->getSession();
+		return $session->getResponseHeaders();
 	}
 
 	/**
 	 * Get contents from $url.
 	 *
-	 * @param string $url    The URL.
-	 * @param string $method The request method. Default is 'GET'.
-	 * @param array  $params An array for the request.
+	 * @param string $url The URL.
+	 * @param string $method The request method.
+	 * @param array $params An array of the http request.
 	 * @return string The contents.
 	 */
 	protected function get_contents( $url, $method = 'GET', $params = array() )
@@ -100,23 +105,6 @@ class RawWordPressContext extends RawMinkContext
 		$response = $this->guzzle->request( $method, $url, $params );
 
 		return $response->getBody();
-	}
-
-	/**
-	 * Get http response headers from the current page.
-	 *
-	 * @param string $url    The URL.
-	 * @param string $method The request method. Default is 'GET'.
-	 * @param array  $params An array for the request.
-	 * @return array HTTP response headers.
-	 */
-	protected function get_http_headers( $url, $method = 'GET', $params = array() )
-	{
-		$params = $params + $this->guzzle_params;
-		$params['stream'] = true;
-		$response = $this->guzzle->request( $method, $url, $params );
-
-		return $response->getHeaders();
 	}
 
 	/**
@@ -129,10 +117,10 @@ class RawWordPressContext extends RawMinkContext
 	 */
 	protected function login( $user, $password )
 	{
-		$this->getSession()->visit( $this->locatePath( '/wp-login.php' ) );
+		$this->getSession( 'default' )->visit( $this->locatePath( '/wp-login.php' ) );
 		$this->wait_the_element( "#loginform" );
 
-		$element = $this->getSession()->getPage();
+		$element = $this->getSession( 'default' )->getPage();
 		$element->fillField( "user_login", $user );
 		$element->fillField( "user_pass", $password );
 
@@ -166,7 +154,7 @@ class RawWordPressContext extends RawMinkContext
 	 */
 	protected function is_current_url( $url )
 	{
-		$current_url = $this->getSession()->getCurrentUrl();
+		$current_url = $this->getSession( 'default' )->getCurrentUrl();
 
 		if ( $url === substr( $current_url, 0 - strlen( $url ) ) ) {
 			return true;
@@ -188,15 +176,15 @@ class RawWordPressContext extends RawMinkContext
 			return; // user isn't login.
 		}
 
-		$page = $this->getSession()->getPage();
+		$page = $this->getSession( 'default' )->getPage();
 		$logout = $page->find( "css", "#wp-admin-bar-logout a" );
 
 		if ( ! empty( $logout ) ) {
-			$this->getSession()->visit( $this->locatePath( $logout->getAttribute( "href" ) ) );
+			$this->getSession( 'default' )->visit( $this->locatePath( $logout->getAttribute( "href" ) ) );
 
 			for ( $i = 0; $i < $this->timeout; $i++ ) {
 				try {
-					$url = $this->getSession()->getCurrentUrl();
+					$url = $this->getSession( 'default' )->getCurrentUrl();
 					if ( strpos( $url, "loggedout=true" ) ) {
 						return true;
 					}
@@ -219,7 +207,7 @@ class RawWordPressContext extends RawMinkContext
 	 */
 	protected function is_logged_in()
 	{
-		$page = $this->getSession()->getPage();
+		$page = $this->getSession( 'default' )->getPage();
 		if ( $page->find( "css", ".logged-in" ) ) {
 			return true;
 		} elseif ( $page->find( "css", ".wp-admin" ) ) {
@@ -238,7 +226,7 @@ class RawWordPressContext extends RawMinkContext
 	 */
 	protected function wait_the_element( $selector )
 	{
-		$page = $this->getSession()->getPage();
+		$page = $this->getSession( 'default' )->getPage();
 		$element = $page->find( 'css', $selector );
 
 		for ( $i = 0; $i < $this->timeout; $i++ ) {
@@ -269,7 +257,7 @@ class RawWordPressContext extends RawMinkContext
 			throw new \Exception( "You are not logged in" );
 		}
 
-		$session = $this->getSession();
+		$session = $this->getSession( 'default' );
 		$session->visit( $this->locatePath( $this->get_admin_url() . '/plugins.php' ) );
 		$page = $session->getPage();
 		$e = $page->findAll( 'css', "#the-list tr" );
@@ -307,8 +295,8 @@ class RawWordPressContext extends RawMinkContext
 			throw new \Exception( "You are not logged in" );
 		}
 
-		$this->getSession()->visit( $this->locatePath( $this->get_admin_url() . '/themes.php' ) );
-		$page = $this->getSession()->getPage();
+		$this->getSession( 'default' )->visit( $this->locatePath( $this->get_admin_url() . '/themes.php' ) );
+		$page = $this->getSession( 'default' )->getPage();
 		$e = $page->find( 'css', ".theme.active" );
 		if ( $e ) {
 			$theme = $e->getAttribute( "data-slug" );
@@ -328,8 +316,8 @@ class RawWordPressContext extends RawMinkContext
 	 */
 	protected function get_wp_version()
 	{
-		$this->getSession()->visit( $this->locatePath( '/' ) );
-		$page = $this->getSession()->getPage();
+		$this->getSession( 'default' )->visit( $this->locatePath( '/' ) );
+		$page = $this->getSession( 'default' )->getPage();
 		$meta = $page->find( 'css', "meta[name=generator]" );
 		if ( $meta ) {
 			$version = $meta->getAttribute( "content" );

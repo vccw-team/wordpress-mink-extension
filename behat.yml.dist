@@ -18,7 +18,10 @@ default:
           password: editor
     Behat\MinkExtension:
       base_url: http://127.0.0.1:8080
+      default_session: default
       sessions:
         default:
           selenium2:
             wd_host: http://127.0.0.1:4444/wd/hub
+        goutte:
+          goutte: ~

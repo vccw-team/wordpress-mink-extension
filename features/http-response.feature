@@ -1,5 +1,6 @@
 Feature: HTTP response
 
+  @mink:goutte
   Scenario: Check http status code
 
     When I am on "/"
@@ -8,6 +9,7 @@ Feature: HTTP response
     When I am on "/the-page-not-found"
     Then the HTTP status should be 404
 
+  @mink:goutte
   Scenario: Check http response headers
 
     When I am on "/"
