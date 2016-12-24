@@ -352,7 +352,7 @@ class RawWordPressContext extends RawMinkContext
 	 * @param none
 	 * @return string Admin url like `/wp-admin`
 	 */
-	protected function get_admin_url()
+	public function get_admin_url()
 	{
 		$params = $this->get_params();
 		return $params['admin_url'];
