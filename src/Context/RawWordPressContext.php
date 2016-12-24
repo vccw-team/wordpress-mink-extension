@@ -12,6 +12,12 @@ class RawWordPressContext extends RawMinkContext
 	protected $timeout = 60;
 	private $parameters; // parameters from the `behat.yml`.
 	private $variables = array();
+	private $guzzle;
+
+	public function __construct()
+	{
+		$this->guzzle = new \GuzzleHttp\Client();
+	}
 
 	/**
 	 * Set parameter form initializer
@@ -62,30 +68,46 @@ class RawWordPressContext extends RawMinkContext
 	/**
 	 * Get http status code from the current page.
 	 *
+	 * @param string $method The request method. Default is 'GET'.
+	 * @param array  $params An array for the request.
 	 * @return int HTTP status code.
 	 */
-	protected function get_http_status()
+	protected function get_http_status( $method = 'GET', $params = array() )
 	{
-		$session = $this->get_goutte_session();
-		return intval( $session->getStatusCode() );
+		$params['exceptions'] = false;
+
+		$current_url = $this->getSession()->getCurrentUrl();
+
+		$response = $this->guzzle->request( $method, $current_url, $params );
+
+		return intval( $response->getStatusCode() );
 	}
 
 	/**
 	 * Get http response headers from the current page.
 	 *
+	 * @param string $method The request method. Default is 'GET'.
+	 * @param array  $params An array for the request.
 	 * @return array HTTP response headers.
 	 */
-	protected function get_http_headers()
+	protected function get_http_headers( $method = 'GET', $params = array() )
 	{
-		$session = $this->get_goutte_session();
-		return $session->getResponseHeaders();
+		$params['exceptions'] = false;
+
+		$current_url = $this->getSession()->getCurrentUrl();
+
+		$response = $this->guzzle->request( $method, $current_url, $params );
+
+		return $response->getHeaders();
 	}
 
 	/**
-	 * Log in into the WordPress
+	 * Log in into the WordPress.
 	 *
 	 * @param string $user The user name.
 	 * @param string $password The password.
+	 * @return bool
+	 * @throws \Exception If the page returns something wrong.
 	 */
 	protected function login( $user, $password )
 	{
@@ -122,6 +144,7 @@ class RawWordPressContext extends RawMinkContext
 	 *
 	 * @param string $url The URL where I should be.
 	 * @return bool Return true when I am at `$url`.
+	 * @throws \Exception If the page returns something wrong.
 	 */
 	protected function is_current_url( $url )
 	{
@@ -135,9 +158,11 @@ class RawWordPressContext extends RawMinkContext
 	}
 
 	/**
-	 * Log out from WordPress
+	 * Log out from WordPress.
 	 *
 	 * @param none
+	 * @return bool
+	 * @throws \Exception If the page returns something wrong.
 	 */
 	protected function logout()
 	{
@@ -190,7 +215,8 @@ class RawWordPressContext extends RawMinkContext
 	 * Wait the $selector to be loaded
 	 *
 	 * @param string $selector The CSS selector.
-	 * @return boolean
+	 * @return bool
+	 * @throws \Exception If the page returns something wrong.
 	 */
 	protected function wait_the_element( $selector )
 	{
@@ -217,6 +243,7 @@ class RawWordPressContext extends RawMinkContext
 	 * Get the current theme
 	 *
 	 * @return string The slug of the current theme.
+	 * @throws \Exception
 	 */
 	protected function get_plugins()
 	{
@@ -254,6 +281,7 @@ class RawWordPressContext extends RawMinkContext
 	 * Get the current theme
 	 *
 	 * @return string The slug of the current theme.
+	 * @throws \Exception
 	 */
 	protected function get_current_theme()
 	{
@@ -278,6 +306,7 @@ class RawWordPressContext extends RawMinkContext
 	 * Get the WordPress version from meta.
 	 *
 	 * @return string WordPress version number.
+	 * @throws \Exception
 	 */
 	protected function get_wp_version()
 	{
@@ -343,7 +372,7 @@ class RawWordPressContext extends RawMinkContext
 	 * @param bool   $condition
 	 * @param string $message
 	 *
-	 * @throws PHPUnit_Framework_AssertionFailedError
+	 * @throws \PHPUnit_Framework_AssertionFailedError
 	 */
 	protected function assertTrue( $condition, $message = '' )
 	{
@@ -356,27 +385,10 @@ class RawWordPressContext extends RawMinkContext
 	 * @param bool   $condition
 	 * @param string $message
 	 *
-	 * @throws PHPUnit_Framework_AssertionFailedError
+	 * @throws \PHPUnit_Framework_AssertionFailedError
 	 */
 	protected function assertFalse( $condition, $message = '' )
 	{
 		\PHPUnit_Framework_Assert::assertFalse( $condition, $message = '' );
-	}
-
-	/**
-	 * Create and return session with goutte driver.
-	 *
-	 * @return object The session object of a goutte driver.
-	 */
-	protected function get_goutte_session()
-	{
-		$current_url = $this->getSession()->getCurrentUrl();
-
-		$goutteClient = new \Behat\Mink\Driver\Goutte\Client();
-		$driver = new \Behat\Mink\Driver\GoutteDriver( $goutteClient );
-		$session = new \Behat\Mink\Session( $driver );
-		$session->visit( $current_url );
-
-		return $session;
 	}
 }
