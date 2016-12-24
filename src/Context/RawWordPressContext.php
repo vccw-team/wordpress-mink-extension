@@ -371,11 +371,11 @@ class RawWordPressContext extends RawMinkContext
 	protected function get_goutte_session()
 	{
 		$current_url = $this->getSession()->getCurrentUrl();
+		$this->getSession()->wait( $second * 1000 );
 
 		$goutteClient = new \Behat\Mink\Driver\Goutte\Client();
 		$driver = new \Behat\Mink\Driver\GoutteDriver( $goutteClient );
 		$session = new \Behat\Mink\Session( $driver );
-		$session->start();
 		$session->visit( $current_url );
 
 		return $session;
