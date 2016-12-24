@@ -13,6 +13,10 @@ class RawWordPressContext extends RawMinkContext
 	private $parameters; // parameters from the `behat.yml`.
 	private $variables = array();
 	private $guzzle;
+	private $guzzle_params = array(
+		'exceptions' => false,
+		'version' => '1.0',
+	);
 
 	public function __construct()
 	{
@@ -74,10 +78,8 @@ class RawWordPressContext extends RawMinkContext
 	 */
 	protected function get_http_status( $method = 'GET', $params = array() )
 	{
-		$params['exceptions'] = false;
-
 		$current_url = $this->getSession()->getCurrentUrl();
-
+		$params = $params + $this->guzzle_params;
 		$response = $this->guzzle->request( $method, $current_url, $params );
 
 		return intval( $response->getStatusCode() );
@@ -93,8 +95,7 @@ class RawWordPressContext extends RawMinkContext
 	 */
 	protected function get_contents( $url, $method = 'GET', $params = array() )
 	{
-		$params['exceptions'] = false;
-
+		$params = $params + $this->guzzle_params;
 		$response = $this->guzzle->request( $method, $url, $params );
 
 		return $response->getBody();
@@ -109,10 +110,8 @@ class RawWordPressContext extends RawMinkContext
 	 */
 	protected function get_http_headers( $method = 'GET', $params = array() )
 	{
-		$params['exceptions'] = false;
-
 		$current_url = $this->getSession()->getCurrentUrl();
-
+		$params = $params + $this->guzzle_params;
 		$response = $this->guzzle->request( $method, $current_url, $params );
 
 		return $response->getHeaders();
