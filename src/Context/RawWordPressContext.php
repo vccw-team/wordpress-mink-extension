@@ -15,7 +15,7 @@ class RawWordPressContext extends RawMinkContext
 	private $guzzle;
 	private $guzzle_params = array(
 		'exceptions' => false,
-		'stream' => true,
+		'verify' => false,
 	);
 
 	public function __construct()
@@ -80,6 +80,7 @@ class RawWordPressContext extends RawMinkContext
 	protected function get_http_status( $url, $method = 'GET', $params = array() )
 	{
 		$params = $params + $this->guzzle_params;
+		$params['stream'] = true;
 		$response = $this->guzzle->request( $method, $url, $params );
 
 		return intval( $response->getStatusCode() );
@@ -112,6 +113,7 @@ class RawWordPressContext extends RawMinkContext
 	protected function get_http_headers( $url, $method = 'GET', $params = array() )
 	{
 		$params = $params + $this->guzzle_params;
+		$params['stream'] = true;
 		$response = $this->guzzle->request( $method, $url, $params );
 
 		return $response->getHeaders();
