@@ -14,8 +14,8 @@ class RawWordPressContext extends RawMinkContext
 	private $variables = array();
 	private $guzzle;
 	private $guzzle_params = array(
-		'exceptions' => false,
 		'verify' => false,
+		'version' => '1.0'
 	);
 
 	public function __construct()
