@@ -27,6 +27,7 @@ class WordPressContext extends RawWordPressContext
 	 * Check http status code.
 	 * Example: Given save env $WP_VERSION as {WP_VERSION}
 	 *
+	 * @param string $expect The HTTP status code.
 	 * @then /^the HTTP status should be (?P<expect>[0-9]+)$/
 	 */
 	public function the_http_status_should_be( $expect )
@@ -49,6 +50,8 @@ class WordPressContext extends RawWordPressContext
      *   | Host          | 127.0.0.1:8080           |
 	 *
 	 * @then /^the HTTP headers should be:$/
+	 * @param TableNode $table The TableNode object.
+	 * @throws \Exception
 	 */
 	public function the_http_headers_should_be( TableNode $table )
 	{
@@ -182,9 +185,10 @@ class WordPressContext extends RawWordPressContext
 	public function wordpress_version_should_be( $version )
 	{
 		$version = $this->replace_variables( $version );
+		$latest = '';
 
 		if ( "latest" === $version || "nightly" === $version ) {
-			$api = file_get_contents( "https://api.wordpress.org/core/version-check/1.7/" );
+			$api = $this->get_contents( "https://api.wordpress.org/core/version-check/1.7/" );
 			$versions = json_decode( $api );
 			$latest = $versions->offers[0]->current;
 		}
@@ -241,6 +245,7 @@ class WordPressContext extends RawWordPressContext
 	 * @param string $username The user name.
 	 * @param string $password The password for the $username.
 	 * @Given /^I login as "(?P<username>(?:[^"]|\\")*)" with password "(?P<password>(?:[^"]|\\")*)"$/
+	 * @throws \Exception
 	 */
 	public function login_as_user_password( $username, $password )
 	{
@@ -277,6 +282,7 @@ class WordPressContext extends RawWordPressContext
 	 *
 	 * @param string $role The role that is defined in `behat.yml`.
 	 * @Given /^I login as the "(?P<role>[a-zA-Z]*)" role$/
+	 * @throws \Exception
 	 */
 	public function login_as_the_role( $role )
 	{
@@ -409,6 +415,7 @@ class WordPressContext extends RawWordPressContext
 	 *
 	 * @param string $path The path to the screenshot will be saved
 	 * @Then /^take a screenshot and save it to "(.*)"/
+	 * @throws \Exception
 	 */
 	public function take_a_screenshot( $path )
 	{

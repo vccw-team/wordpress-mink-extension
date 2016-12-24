@@ -93,11 +93,26 @@ Login as the administrator role and I should see "Dashboard".
 ```
 Feature: I login as the specfic role
 
-  @javascript
   Scenario: Login as the "administrator" role
 
     When I login as the "administrator" role
     Then I should see "Welcome to WordPress!"
+```
+
+Selenium2 driver can't retrieve the HTTP response.
+So you have to use `@mink::goutte` tag like following.
+
+```
+Feature: HTTP response
+
+  @mink:goutte
+  Scenario: Check http status code
+
+    When I am on "/"
+    Then the HTTP status should be 200
+
+    When I am on "/the-page-not-found"
+    Then the HTTP status should be 404
 ```
 
 Run to see contexts.
@@ -111,7 +126,7 @@ $ vendor/bin/behat -di --lang=en
 Following is an exmaple for PhantomJS.
 
 ```
-$ npm install phantomjs --save
+$ npm install phantomjs-prebuilt --save
 $ node_modules/.bin/phantomjs --webdriver=4444 --ignore-ssl-errors=yes --cookies-file=/tmp/webdriver_cookie.txt
 ```
 

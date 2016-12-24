@@ -12,6 +12,16 @@ class RawWordPressContext extends RawMinkContext
 	protected $timeout = 60;
 	private $parameters; // parameters from the `behat.yml`.
 	private $variables = array();
+	private $guzzle;
+	private $guzzle_params = array(
+		'exceptions' => false,
+		'verify' => false,
+	);
+
+	public function __construct()
+	{
+		$this->guzzle = new \GuzzleHttp\Client();
+	}
 
 	/**
 	 * Set parameter form initializer
@@ -66,7 +76,7 @@ class RawWordPressContext extends RawMinkContext
 	 */
 	protected function get_http_status()
 	{
-		$session = $this->get_goutte_session();
+		$session = $this->getSession();
 		return intval( $session->getStatusCode() );
 	}
 
@@ -77,22 +87,40 @@ class RawWordPressContext extends RawMinkContext
 	 */
 	protected function get_http_headers()
 	{
-		$session = $this->get_goutte_session();
+		$session = $this->getSession();
 		return $session->getResponseHeaders();
 	}
 
 	/**
-	 * Log in into the WordPress
+	 * Get contents from $url.
+	 *
+	 * @param string $url The URL.
+	 * @param string $method The request method.
+	 * @param array $params An array of the http request.
+	 * @return string The contents.
+	 */
+	protected function get_contents( $url, $method = 'GET', $params = array() )
+	{
+		$params = $params + $this->guzzle_params;
+		$response = $this->guzzle->request( $method, $url, $params );
+
+		return $response->getBody();
+	}
+
+	/**
+	 * Log in into the WordPress.
 	 *
 	 * @param string $user The user name.
 	 * @param string $password The password.
+	 * @return bool
+	 * @throws \Exception If the page returns something wrong.
 	 */
 	protected function login( $user, $password )
 	{
-		$this->getSession()->visit( $this->locatePath( '/wp-login.php' ) );
+		$this->getSession( 'default' )->visit( $this->locatePath( '/wp-login.php' ) );
 		$this->wait_the_element( "#loginform" );
 
-		$element = $this->getSession()->getPage();
+		$element = $this->getSession( 'default' )->getPage();
 		$element->fillField( "user_login", $user );
 		$element->fillField( "user_pass", $password );
 
@@ -122,10 +150,11 @@ class RawWordPressContext extends RawMinkContext
 	 *
 	 * @param string $url The URL where I should be.
 	 * @return bool Return true when I am at `$url`.
+	 * @throws \Exception If the page returns something wrong.
 	 */
 	protected function is_current_url( $url )
 	{
-		$current_url = $this->getSession()->getCurrentUrl();
+		$current_url = $this->getSession( 'default' )->getCurrentUrl();
 
 		if ( $url === substr( $current_url, 0 - strlen( $url ) ) ) {
 			return true;
@@ -135,9 +164,11 @@ class RawWordPressContext extends RawMinkContext
 	}
 
 	/**
-	 * Log out from WordPress
+	 * Log out from WordPress.
 	 *
 	 * @param none
+	 * @return bool
+	 * @throws \Exception If the page returns something wrong.
 	 */
 	protected function logout()
 	{
@@ -145,15 +176,15 @@ class RawWordPressContext extends RawMinkContext
 			return; // user isn't login.
 		}
 
-		$page = $this->getSession()->getPage();
+		$page = $this->getSession( 'default' )->getPage();
 		$logout = $page->find( "css", "#wp-admin-bar-logout a" );
 
 		if ( ! empty( $logout ) ) {
-			$this->getSession()->visit( $this->locatePath( $logout->getAttribute( "href" ) ) );
+			$this->getSession( 'default' )->visit( $this->locatePath( $logout->getAttribute( "href" ) ) );
 
 			for ( $i = 0; $i < $this->timeout; $i++ ) {
 				try {
-					$url = $this->getSession()->getCurrentUrl();
+					$url = $this->getSession( 'default' )->getCurrentUrl();
 					if ( strpos( $url, "loggedout=true" ) ) {
 						return true;
 					}
@@ -176,7 +207,7 @@ class RawWordPressContext extends RawMinkContext
 	 */
 	protected function is_logged_in()
 	{
-		$page = $this->getSession()->getPage();
+		$page = $this->getSession( 'default' )->getPage();
 		if ( $page->find( "css", ".logged-in" ) ) {
 			return true;
 		} elseif ( $page->find( "css", ".wp-admin" ) ) {
@@ -190,11 +221,12 @@ class RawWordPressContext extends RawMinkContext
 	 * Wait the $selector to be loaded
 	 *
 	 * @param string $selector The CSS selector.
-	 * @return boolean
+	 * @return bool
+	 * @throws \Exception If the page returns something wrong.
 	 */
 	protected function wait_the_element( $selector )
 	{
-		$page = $this->getSession()->getPage();
+		$page = $this->getSession( 'default' )->getPage();
 		$element = $page->find( 'css', $selector );
 
 		for ( $i = 0; $i < $this->timeout; $i++ ) {
@@ -217,6 +249,7 @@ class RawWordPressContext extends RawMinkContext
 	 * Get the current theme
 	 *
 	 * @return string The slug of the current theme.
+	 * @throws \Exception
 	 */
 	protected function get_plugins()
 	{
@@ -224,7 +257,7 @@ class RawWordPressContext extends RawMinkContext
 			throw new \Exception( "You are not logged in" );
 		}
 
-		$session = $this->getSession();
+		$session = $this->getSession( 'default' );
 		$session->visit( $this->locatePath( $this->get_admin_url() . '/plugins.php' ) );
 		$page = $session->getPage();
 		$e = $page->findAll( 'css', "#the-list tr" );
@@ -254,6 +287,7 @@ class RawWordPressContext extends RawMinkContext
 	 * Get the current theme
 	 *
 	 * @return string The slug of the current theme.
+	 * @throws \Exception
 	 */
 	protected function get_current_theme()
 	{
@@ -261,8 +295,8 @@ class RawWordPressContext extends RawMinkContext
 			throw new \Exception( "You are not logged in" );
 		}
 
-		$this->getSession()->visit( $this->locatePath( $this->get_admin_url() . '/themes.php' ) );
-		$page = $this->getSession()->getPage();
+		$this->getSession( 'default' )->visit( $this->locatePath( $this->get_admin_url() . '/themes.php' ) );
+		$page = $this->getSession( 'default' )->getPage();
 		$e = $page->find( 'css', ".theme.active" );
 		if ( $e ) {
 			$theme = $e->getAttribute( "data-slug" );
@@ -278,11 +312,12 @@ class RawWordPressContext extends RawMinkContext
 	 * Get the WordPress version from meta.
 	 *
 	 * @return string WordPress version number.
+	 * @throws \Exception
 	 */
 	protected function get_wp_version()
 	{
-		$this->getSession()->visit( $this->locatePath( '/' ) );
-		$page = $this->getSession()->getPage();
+		$this->getSession( 'default' )->visit( $this->locatePath( '/' ) );
+		$page = $this->getSession( 'default' )->getPage();
 		$meta = $page->find( 'css', "meta[name=generator]" );
 		if ( $meta ) {
 			$version = $meta->getAttribute( "content" );
@@ -343,7 +378,7 @@ class RawWordPressContext extends RawMinkContext
 	 * @param bool   $condition
 	 * @param string $message
 	 *
-	 * @throws PHPUnit_Framework_AssertionFailedError
+	 * @throws \PHPUnit_Framework_AssertionFailedError
 	 */
 	protected function assertTrue( $condition, $message = '' )
 	{
@@ -356,28 +391,10 @@ class RawWordPressContext extends RawMinkContext
 	 * @param bool   $condition
 	 * @param string $message
 	 *
-	 * @throws PHPUnit_Framework_AssertionFailedError
+	 * @throws \PHPUnit_Framework_AssertionFailedError
 	 */
 	protected function assertFalse( $condition, $message = '' )
 	{
 		\PHPUnit_Framework_Assert::assertFalse( $condition, $message = '' );
-	}
-
-	/**
-	 * Create and return session with goutte driver.
-	 *
-	 * @return object The session object of a goutte driver.
-	 */
-	protected function get_goutte_session()
-	{
-		$current_url = $this->getSession()->getCurrentUrl();
-
-		$goutteClient = new \Behat\Mink\Driver\Goutte\Client();
-		$driver = new \Behat\Mink\Driver\GoutteDriver( $goutteClient );
-		$session = new \Behat\Mink\Session( $driver );
-		$session->start();
-		$session->visit( $current_url );
-
-		return $session;
 	}
 }
