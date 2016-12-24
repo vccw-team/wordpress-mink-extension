@@ -111,7 +111,7 @@ $ vendor/bin/behat -di --lang=en
 Following is an exmaple for PhantomJS.
 
 ```
-$ npm install phantomjs --save
+$ npm install phantomjs-prebuilt --save
 $ node_modules/.bin/phantomjs --webdriver=4444 --ignore-ssl-errors=yes --cookies-file=/tmp/webdriver_cookie.txt
 ```
 
