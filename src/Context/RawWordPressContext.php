@@ -117,10 +117,10 @@ class RawWordPressContext extends RawMinkContext
 	 */
 	protected function login( $user, $password )
 	{
-		$this->getSession( 'default' )->visit( $this->locatePath( '/wp-login.php' ) );
+		$this->getSession()->visit( $this->locatePath( '/wp-login.php' ) );
 		$this->wait_the_element( "#loginform" );
 
-		$element = $this->getSession( 'default' )->getPage();
+		$element = $this->getSession()->getPage();
 		$element->fillField( "user_login", $user );
 		$element->fillField( "user_pass", $password );
 
@@ -154,7 +154,7 @@ class RawWordPressContext extends RawMinkContext
 	 */
 	protected function is_current_url( $url )
 	{
-		$current_url = $this->getSession( 'default' )->getCurrentUrl();
+		$current_url = $this->getSession()->getCurrentUrl();
 
 		if ( $url === substr( $current_url, 0 - strlen( $url ) ) ) {
 			return true;
@@ -176,15 +176,15 @@ class RawWordPressContext extends RawMinkContext
 			return; // user isn't login.
 		}
 
-		$page = $this->getSession( 'default' )->getPage();
+		$page = $this->getSession()->getPage();
 		$logout = $page->find( "css", "#wp-admin-bar-logout a" );
 
 		if ( ! empty( $logout ) ) {
-			$this->getSession( 'default' )->visit( $this->locatePath( $logout->getAttribute( "href" ) ) );
+			$this->getSession()->visit( $this->locatePath( $logout->getAttribute( "href" ) ) );
 
 			for ( $i = 0; $i < $this->timeout; $i++ ) {
 				try {
-					$url = $this->getSession( 'default' )->getCurrentUrl();
+					$url = $this->getSession()->getCurrentUrl();
 					if ( strpos( $url, "loggedout=true" ) ) {
 						return true;
 					}
@@ -207,7 +207,7 @@ class RawWordPressContext extends RawMinkContext
 	 */
 	protected function is_logged_in()
 	{
-		$page = $this->getSession( 'default' )->getPage();
+		$page = $this->getSession()->getPage();
 		if ( $page->find( "css", ".logged-in" ) ) {
 			return true;
 		} elseif ( $page->find( "css", ".wp-admin" ) ) {
@@ -226,7 +226,7 @@ class RawWordPressContext extends RawMinkContext
 	 */
 	protected function wait_the_element( $selector )
 	{
-		$page = $this->getSession( 'default' )->getPage();
+		$page = $this->getSession()->getPage();
 		$element = $page->find( 'css', $selector );
 
 		for ( $i = 0; $i < $this->timeout; $i++ ) {
@@ -257,7 +257,7 @@ class RawWordPressContext extends RawMinkContext
 			throw new \Exception( "You are not logged in" );
 		}
 
-		$session = $this->getSession( 'default' );
+		$session = $this->getSession();
 		$session->visit( $this->locatePath( $this->get_admin_url() . '/plugins.php' ) );
 		$page = $session->getPage();
 		$e = $page->findAll( 'css', "#the-list tr" );
@@ -295,8 +295,8 @@ class RawWordPressContext extends RawMinkContext
 			throw new \Exception( "You are not logged in" );
 		}
 
-		$this->getSession( 'default' )->visit( $this->locatePath( $this->get_admin_url() . '/themes.php' ) );
-		$page = $this->getSession( 'default' )->getPage();
+		$this->getSession()->visit( $this->locatePath( $this->get_admin_url() . '/themes.php' ) );
+		$page = $this->getSession()->getPage();
 		$e = $page->find( 'css', ".theme.active" );
 		if ( $e ) {
 			$theme = $e->getAttribute( "data-slug" );
@@ -316,8 +316,8 @@ class RawWordPressContext extends RawMinkContext
 	 */
 	protected function get_wp_version()
 	{
-		$this->getSession( 'default' )->visit( $this->locatePath( '/' ) );
-		$page = $this->getSession( 'default' )->getPage();
+		$this->getSession()->visit( $this->locatePath( '/' ) );
+		$page = $this->getSession()->getPage();
 		$meta = $page->find( 'css', "meta[name=generator]" );
 		if ( $meta ) {
 			$version = $meta->getAttribute( "content" );
