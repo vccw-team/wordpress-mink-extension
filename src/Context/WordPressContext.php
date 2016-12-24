@@ -33,7 +33,6 @@ class WordPressContext extends RawWordPressContext
 	public function the_http_status_should_be( $expect )
 	{
 		$current_url = $this->getSession()->getCurrentUrl();
-		echo $current_url;
 		$status = $this->get_http_status( $current_url );
 		$this->assertSame( $status, intval( $expect ), sprintf(
 			'The HTTP status is %1$s, but it should be %2$s',
@@ -58,7 +57,6 @@ class WordPressContext extends RawWordPressContext
 	public function the_http_headers_should_be( TableNode $table )
 	{
 		$current_url = $this->getSession()->getCurrentUrl();
-		echo $current_url;
 		$headers = $this->get_http_headers( $current_url );
 
 		foreach ( $table->getHash() as $row ) {
