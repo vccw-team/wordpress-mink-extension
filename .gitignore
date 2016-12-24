@@ -1,6 +1,7 @@
-behat.yml
-node_modules/
-npm-debug.log
-vendor/
-wp-cli.yml
-wp-cli-nightly.phar
+/.idea/
+/behat.yml
+/node_modules/
+/npm-debug.log
+/vendor/
+/wp-cli.yml
+/wp-cli-nightly.phar
