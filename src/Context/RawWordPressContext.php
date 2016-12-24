@@ -84,6 +84,23 @@ class RawWordPressContext extends RawMinkContext
 	}
 
 	/**
+	 * Get contents from $url.
+	 *
+	 * @param string $url    The url.
+	 * @param string $method The request method. Default is 'GET'.
+	 * @param array  $params An array for the request.
+	 * @return string The contents.
+	 */
+	protected function get_contents( $url, $method = 'GET', $params = array() )
+	{
+		$params['exceptions'] = false;
+
+		$response = $this->guzzle->request( $method, $url, $params );
+
+		return $response->getBody();
+	}
+
+	/**
 	 * Get http response headers from the current page.
 	 *
 	 * @param string $method The request method. Default is 'GET'.

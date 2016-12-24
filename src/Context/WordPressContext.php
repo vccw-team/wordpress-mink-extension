@@ -184,7 +184,7 @@ class WordPressContext extends RawWordPressContext
 		$version = $this->replace_variables( $version );
 
 		if ( "latest" === $version || "nightly" === $version ) {
-			$api = file_get_contents( "https://api.wordpress.org/core/version-check/1.7/" );
+			$api = $this->get_contents( "https://api.wordpress.org/core/version-check/1.7/" );
 			$versions = json_decode( $api );
 			$latest = $versions->offers[0]->current;
 		}
