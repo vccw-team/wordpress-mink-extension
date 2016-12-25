@@ -12,12 +12,6 @@ class RawWordPressContext extends RawMinkContext
 	protected $timeout = 60;
 	private $parameters; // parameters from the `behat.yml`.
 	private $variables = array();
-	private $guzzle;
-
-	public function __construct()
-	{
-		$this->guzzle = new \GuzzleHttp\Client();
-	}
 
 	/**
 	 * Set parameter form initializer
@@ -91,22 +85,12 @@ class RawWordPressContext extends RawMinkContext
 	 * Get contents from $url.
 	 *
 	 * @param string $url The URL.
-	 * @param string $method The request method.
-	 * @param array $params An array of the http request.
 	 * @return string The contents.
 	 */
-	protected function get_contents( $url, $method = 'GET', $params = array() )
+	protected function get_contents( $url )
 	{
-		$defaults = array(
-			'verify' => false,
-			'version' => '1.1'
-		);
-
-		$response = $this->guzzle->request( $method, $url, array_merge(
-			$defaults, $params
-		) );
-
-		return $response->getBody();
+		$this->getSession()->visit( $url );
+		return $this->getSession()->getPage()->getText();
 	}
 
 	/**
