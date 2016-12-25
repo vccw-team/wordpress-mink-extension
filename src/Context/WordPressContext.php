@@ -119,6 +119,10 @@ class WordPressContext extends RawWordPressContext
 		$selectElement = $page->find('css', '#bulk-action-selector-bottom');
 		$selectElement->selectOption('activate-selected');
 		$page->find('css', '#doaction2')->click();
+
+		// check the plugin is activated.
+		$this->the_plugin_should_be($slug, 'activated');
+
 	}
 
 	/**
