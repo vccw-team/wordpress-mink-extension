@@ -44,6 +44,15 @@ Feature: Get statuses of plugins
       | akismet            |
       | hello-dolly        |
 
+  Scenario Outline: I activate plugin.
+    When I login as the "administrator" role
+    Then I activate the "<slug>" plugin
+
+    Examples:
+      | slug        |
+      | akismet     |
+      | hello-dolly |
+
   @mink:goutte
   Scenario: Get plugins with goutte driver
 
@@ -92,3 +101,13 @@ Feature: Get statuses of plugins
       | slug               |
       | akismet            |
       | hello-dolly        |
+
+  @mink:goutte
+  Scenario Outline: I activate plugin.
+    When I login as the "administrator" role
+    Then I activate the "<slug>" plugin
+
+    Examples:
+      | slug        |
+      | akismet     |
+      | hello-dolly |
