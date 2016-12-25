@@ -13,10 +13,6 @@ class RawWordPressContext extends RawMinkContext
 	private $parameters; // parameters from the `behat.yml`.
 	private $variables = array();
 	private $guzzle;
-	private $guzzle_params = array(
-		'verify' => false,
-		'version' => '1.0'
-	);
 
 	public function __construct()
 	{
@@ -101,8 +97,14 @@ class RawWordPressContext extends RawMinkContext
 	 */
 	protected function get_contents( $url, $method = 'GET', $params = array() )
 	{
-		$params = $params + $this->guzzle_params;
-		$response = $this->guzzle->request( $method, $url, $params );
+		$defaults = array(
+			'verify' => false,
+			'version' => '1.1'
+		);
+
+		$response = $this->guzzle->request( $method, $url, array_merge(
+			$defaults, $params
+		) );
 
 		return $response->getBody();
 	}
