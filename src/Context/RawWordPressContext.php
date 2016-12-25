@@ -299,7 +299,8 @@ class RawWordPressContext extends RawMinkContext
 		$page = $this->getSession()->getPage();
 		$e = $page->find( 'css', ".theme.active" );
 		if ( $e ) {
-			$theme = $e->getAttribute( "data-slug" );
+			$classes = preg_split( "/\s+/", trim( $e->getAttribute( "aria-describedby" ) ) );
+			$theme = preg_replace( "/\-(name|action)$/", "", $classes[0] );
 			if ( $theme ) {
 				return $theme;
 			}
