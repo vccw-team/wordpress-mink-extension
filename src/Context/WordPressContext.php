@@ -159,7 +159,27 @@ class WordPressContext extends RawWordPressContext
 	}
 
 	/**
-	 * Check the theme is activated.
+	 * Activate plugin
+	 *
+	 * @then /^I activate the "(?P<slug>[^"]*)" plugin$/
+	 */
+	public function i_activate_the_plugin($slug) {
+		$session = $this->getSession();
+		$session->visit( $this->locatePath( $this->get_admin_url() . '/plugins.php' ) );
+		$page = $session->getPage();
+		$optionElement = $page->find('css', '[data-slug="' . $slug . '"] > th > input');
+		$optionElement->click();
+		$selectElement = $page->find('css', '#bulk-action-selector-bottom');
+		$selectElement->selectOption('activate-selected');
+		$page->find('css', '#doaction2')->click();
+
+		// check the plugin is activated.
+		$this->the_plugin_should_be($slug, 'activated');
+
+	}
+
+	/**
+	 * Check the theme is activated
 	 * Example: Given the "twentysixteen" theme should be activated
 	 *
 	 * @Then /^the "(?P<theme>[^"]*)" theme should be activated$/
