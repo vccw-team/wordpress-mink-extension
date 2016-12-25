@@ -25,7 +25,7 @@ class WordPressContext extends RawWordPressContext
 
 	/**
 	 * Check http status code.
-	 * Example: Given save env $WP_VERSION as {WP_VERSION}
+	 * Example: the HTTP status should be 400
 	 *
 	 * @param string $expect The HTTP status code.
 	 * @then /^the HTTP status should be (?P<expect>[0-9]+)$/

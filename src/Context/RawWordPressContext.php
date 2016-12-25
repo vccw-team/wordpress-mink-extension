@@ -12,16 +12,6 @@ class RawWordPressContext extends RawMinkContext
 	protected $timeout = 60;
 	private $parameters; // parameters from the `behat.yml`.
 	private $variables = array();
-	private $guzzle;
-	private $guzzle_params = array(
-		'exceptions' => false,
-		'verify' => false,
-	);
-
-	public function __construct()
-	{
-		$this->guzzle = new \GuzzleHttp\Client();
-	}
 
 	/**
 	 * Set parameter form initializer
@@ -95,16 +85,12 @@ class RawWordPressContext extends RawMinkContext
 	 * Get contents from $url.
 	 *
 	 * @param string $url The URL.
-	 * @param string $method The request method.
-	 * @param array $params An array of the http request.
 	 * @return string The contents.
 	 */
-	protected function get_contents( $url, $method = 'GET', $params = array() )
+	protected function get_contents( $url )
 	{
-		$params = $params + $this->guzzle_params;
-		$response = $this->guzzle->request( $method, $url, $params );
-
-		return $response->getBody();
+		$this->getSession()->visit( $url );
+		return $this->getSession()->getPage()->getText();
 	}
 
 	/**
@@ -299,7 +285,8 @@ class RawWordPressContext extends RawMinkContext
 		$page = $this->getSession()->getPage();
 		$e = $page->find( 'css', ".theme.active" );
 		if ( $e ) {
-			$theme = $e->getAttribute( "data-slug" );
+			$classes = preg_split( "/\s+/", trim( $e->getAttribute( "aria-describedby" ) ) );
+			$theme = preg_replace( "/\-(name|action)$/", "", $classes[0] );
 			if ( $theme ) {
 				return $theme;
 			}
@@ -352,7 +339,7 @@ class RawWordPressContext extends RawMinkContext
 	 * @param none
 	 * @return string Admin url like `/wp-admin`
 	 */
-	protected function get_admin_url()
+	public function get_admin_url()
 	{
 		$params = $this->get_params();
 		return $params['admin_url'];

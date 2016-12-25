@@ -49,18 +49,24 @@ default:
         administrator:
           username: admin
           password: admin
+        editor:
+          username: editor
+          password: editor
     Behat\MinkExtension:
       base_url: http://127.0.0.1:8080
+      default_session: default
       sessions:
         default:
           selenium2:
             wd_host: http://127.0.0.1:4444/wd/hub
+        goutte:
+          goutte: ~
+
 ```
 
-* Add user accounts of your WordPress site to `VCCW\Behat\Mink\WordPressExtension > roles`.
+* Add user accounts of your WordPress site into `VCCW\Behat\Mink\WordPressExtension > roles`.
 * Update value of the `Behat\MinkExtension > base_url` to your hostname.
-
-#### You can add multiple user like following.
+* You can add multiple user like following.
 
 ```
   extensions:
@@ -74,6 +80,7 @@ default:
           password: editor
 ```
 
+See:
 https://github.com/vccw-team/wordpress-extension/blob/master/behat.yml.dist
 
 ### Write features
@@ -100,7 +107,8 @@ Feature: I login as the specfic role
 ```
 
 Selenium2 driver can't retrieve the HTTP response.
-So you have to use `@mink::goutte` tag like following.
+So you have to use `@mink::goutte` tag like following in your `*.feature`.
+But goutte driver can't exec JavaScript.
 
 ```
 Feature: HTTP response
