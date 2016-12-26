@@ -159,7 +159,7 @@ class RawWordPressContext extends RawMinkContext
 	protected function logout()
 	{
 		if ( ! $this->is_logged_in() ) {
-			return; // user isn't login.
+			return false; // user isn't login.
 		}
 
 		$page = $this->getSession()->getPage();
@@ -213,7 +213,6 @@ class RawWordPressContext extends RawMinkContext
 	protected function wait_the_element( $selector )
 	{
 		$page = $this->getSession()->getPage();
-		$element = $page->find( 'css', $selector );
 
 		for ( $i = 0; $i < $this->timeout; $i++ ) {
 			try {
@@ -267,6 +266,101 @@ class RawWordPressContext extends RawMinkContext
 		}
 
 		return $plugins;
+	}
+
+	/**
+	 * Check the plugin is activated.
+	 *
+	 * @param string $slug The slug of the plugin.
+	 * @return bool Return true if plugin is activated.
+	 * @throws \Exception
+	 */
+	public function is_plugin_activated( $slug )
+	{
+		$element = $this->search_plugin( $slug );
+		if ( ! $element ) {
+			throw new \Exception( sprintf(
+				"The %s plugin is not installed.",
+				$slug
+			) );
+		}
+		$classes = preg_split( '/\s+/', trim( $element->getAttribute( "class" ) ) );
+		if ( in_array( 'active', $classes ) ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Check the plugin is installed.
+	 *
+	 * @param string $slug The slug of the plugin.
+	 * @return bool Return true if plugin is installed.
+	 * @throws \Exception
+	 */
+	public function is_plugin_installed( $slug )
+	{
+		$element = $this->search_plugin( $slug );
+		if ( count( $element ) ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Activate the plugin.
+	 *
+	 * @param string $slug The slug of the plugin.
+	 * @throws \Exception
+	 */
+	public function activate_plugin( $slug )
+	{
+		$element = $this->search_plugin( $slug );
+		if ( ! $element ) {
+			throw new \Exception( sprintf(
+				"The %s plugin is not installed.",
+				$slug
+			) );
+		}
+		$edit = $element->find( 'css', '.activate a' );
+		$edit->click();
+		sleep( 1 );
+	}
+
+	/**
+	 * Deactivate the plugin.
+	 *
+	 * @param string $slug The slug of the plugin.
+	 * @throws \Exception
+	 */
+	public function deactivate_plugin( $slug )
+	{
+		$element = $this->search_plugin( $slug );
+		if ( ! $element ) {
+			throw new \Exception( sprintf(
+				"The %s plugin is not installed.",
+				$slug
+			) );
+		}
+		$edit = $element->find( 'css', '.deactivate a' );
+		$edit->click();
+		sleep( 1 );
+	}
+
+	/**
+	 * Search plugin in the plugins.php
+	 *
+	 * @param string $slug The slug of the plugin.
+	 * @return object An object of the dom element of plugin row.
+	 */
+	public function search_plugin( $slug )
+	{
+		$session = $this->getSession();
+		$path = $this->get_admin_url() . '/plugins.php?s=' . urlencode( $slug );
+		$session->visit( $this->locatePath( $path ) );
+		return $session->getPage()->find( 'css', 'tr[data-slug="' . $slug . '"]' );
 	}
 
 	/**
