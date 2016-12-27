@@ -32,8 +32,7 @@ class RawWordPressContextSpec extends ObjectBehavior
         $this->set_params( $params );
         $this->get_params()->shouldReturn( $params );
 	}
-
-
+	
 	public function it_can_replace_var()
 	{
 		// variable should be converted.
