@@ -2,8 +2,8 @@
   "scripts": {
     "install-wp": "curl https://raw.githubusercontent.com/vccw-team/install-wp/master/install-wp.sh | /usr/bin/env bash",
     "wp": "curl https://raw.githubusercontent.com/vccw-team/install-wp/master/run-wp.sh | /usr/bin/env bash",
-    "phpspec": "vendor/bin/phpspec run",
-    "behat": "/usr/bin/env node bin/run-tests.js",
+    "phpspec": "/usr/bin/env node bin/run-phpspec.js",
+    "behat": "/usr/bin/env node bin/run-behat.js",
     "test": "npm run phpspec && npm run behat"
   },
   "devDependencies": {

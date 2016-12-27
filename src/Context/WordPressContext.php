@@ -30,16 +30,19 @@ class WordPressContext extends RawWordPressContext
 	 * Example: the HTTP status should be 400
 	 *
 	 * @param string $expect The HTTP status code.
+	 * @throws \Exception
 	 * @then /^the HTTP status should be (?P<expect>[0-9]+)$/
 	 */
 	public function the_http_status_should_be( $expect )
 	{
 		$status = $this->get_http_status();
-		$this->assertSame( $status, intval( $expect ), sprintf(
-			'The HTTP status is %1$s, but it should be %2$s',
-			$status,
-			$expect
-		) );
+		if ( intval( $expect ) !== $status ) {
+			throw new \Exception(sprintf(
+				'The HTTP status is %1$s, but it should be %2$s',
+				$status,
+				$expect
+			));
+		}
 	}
 
 	/**

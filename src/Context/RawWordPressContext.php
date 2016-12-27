@@ -64,7 +64,7 @@ class RawWordPressContext extends RawMinkContext
 	 *
 	 * @return int HTTP status code.
 	 */
-	protected function get_http_status()
+	public function get_http_status()
 	{
 		$session = $this->getSession();
 		return intval( $session->getStatusCode() );
@@ -75,7 +75,7 @@ class RawWordPressContext extends RawMinkContext
 	 *
 	 * @return array HTTP response headers.
 	 */
-	protected function get_http_headers()
+	public function get_http_headers()
 	{
 		$session = $this->getSession();
 		return $session->getResponseHeaders();
@@ -87,7 +87,7 @@ class RawWordPressContext extends RawMinkContext
 	 * @param string $url The URL.
 	 * @return string The contents.
 	 */
-	protected function get_contents( $url )
+	public function get_contents( $url )
 	{
 		$this->getSession()->visit( $url );
 		return $this->getSession()->getPage()->getText();
@@ -101,7 +101,7 @@ class RawWordPressContext extends RawMinkContext
 	 * @return bool
 	 * @throws \Exception If the page returns something wrong.
 	 */
-	protected function login( $user, $password )
+	public function login( $user, $password )
 	{
 		$this->getSession()->visit( $this->locatePath( '/wp-login.php' ) );
 		$this->wait_the_element( "#loginform" );
@@ -138,7 +138,7 @@ class RawWordPressContext extends RawMinkContext
 	 * @return bool Return true when I am at `$url`.
 	 * @throws \Exception If the page returns something wrong.
 	 */
-	protected function is_current_url( $url )
+	public function is_current_url( $url )
 	{
 		$current_url = $this->getSession()->getCurrentUrl();
 
@@ -156,7 +156,7 @@ class RawWordPressContext extends RawMinkContext
 	 * @return bool
 	 * @throws \Exception If the page returns something wrong.
 	 */
-	protected function logout()
+	public function logout()
 	{
 		if ( ! $this->is_logged_in() ) {
 			return false; // user isn't login.
@@ -191,7 +191,7 @@ class RawWordPressContext extends RawMinkContext
 	 * @return boolean
 	 *   Returns TRUE if a user is logged in for this session.
 	 */
-	protected function is_logged_in()
+	public function is_logged_in()
 	{
 		$page = $this->getSession()->getPage();
 		if ( $page->find( "css", ".logged-in" ) ) {
@@ -210,7 +210,7 @@ class RawWordPressContext extends RawMinkContext
 	 * @return bool
 	 * @throws \Exception If the page returns something wrong.
 	 */
-	protected function wait_the_element( $selector )
+	public function wait_the_element( $selector )
 	{
 		$page = $this->getSession()->getPage();
 
