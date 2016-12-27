@@ -231,44 +231,6 @@ class RawWordPressContext extends RawMinkContext
 	}
 
 	/**
-	 * Get the current theme
-	 *
-	 * @return string The slug of the current theme.
-	 * @throws \Exception
-	 */
-	protected function get_plugins()
-	{
-		if ( ! $this->is_logged_in() ) {
-			throw new \Exception( "You are not logged in" );
-		}
-
-		$session = $this->getSession();
-		$session->visit( $this->locatePath( $this->get_admin_url() . '/plugins.php' ) );
-		$page = $session->getPage();
-		$e = $page->findAll( 'css', "#the-list tr" );
-		if ( ! count( $e ) ) {
-			throw new \Exception( "Maybe you don't have permission to get plugins." );
-		}
-
-		$plugins = array();
-		foreach ( $e as $plugin ) {
-			$slug = $plugin->getAttribute( "data-slug" );
-			$classes = preg_split( "/\s+/", $plugin->getAttribute( "class" ) );
-			if ( in_array( "active", $classes ) ) {
-				$status = "active";
-			} else {
-				$status = "inactive";
-			}
-
-			$plugins[ $slug ] = array(
-				"status" => $status,
-			);
-		}
-
-		return $plugins;
-	}
-
-	/**
 	 * Check the plugin is activated.
 	 *
 	 * @param string $slug The slug of the plugin.

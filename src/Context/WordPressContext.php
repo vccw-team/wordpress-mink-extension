@@ -150,8 +150,6 @@ class WordPressContext extends RawWordPressContext
 	 */
 	public function the_plugin_should_not_be( $slug, $expect )
 	{
-		$plugins = $this->get_plugins();
-
 		if ( "installed" === $expect && $this->is_plugin_installed( $slug ) ) {
 			throw new \Exception( sprintf(
 				"The %s plugin should not be installed, but installed.",
