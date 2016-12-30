@@ -32,7 +32,7 @@ class RawWordPressContextSpec extends ObjectBehavior
         $this->set_params( $params );
         $this->get_params()->shouldReturn( $params );
 	}
-	
+
 	public function it_can_replace_var()
 	{
 		// variable should be converted.
@@ -92,22 +92,53 @@ class RawWordPressContextSpec extends ObjectBehavior
 		);
 	}
 
-	public function it_can_login_with_goutte()
+	public function it_can_login_with()
 	{
 		$this->init_mink( 'goutte' );
-		$session = $this->getSession();
+
+		$this->login( 'admin', 'admin' )->shouldReturn( true );
+		$this->login( 'admin', 'xxxx' )->shouldReturn( false );
+
+		$this->init_mink( 'selenium2' );
 
 		$this->login( 'admin', 'admin' )->shouldReturn( true );
 		$this->login( 'admin', 'xxxx' )->shouldReturn( false );
 	}
 
-	public function it_can_login_with_selenium2()
+	public function it_can_check_current_url_with()
 	{
+		$this->init_mink( 'goutte' );
+		$session = $this->getSession();
+
+		$session->visit( 'http://127.0.0.1:8080/i-am-here' );
+
+		$this->is_current_url( "/i-am-here" )->shouldReturn( true );
+		$this->is_current_url( "/i-am-not-here" )->shouldReturn( false );
+
 		$this->init_mink( 'selenium2' );
 		$session = $this->getSession();
 
+		$session->visit( 'http://127.0.0.1:8080/i-am-here' );
+
+		$this->is_current_url( "/i-am-here" )->shouldReturn( true );
+		$this->is_current_url( "/i-am-not-here" )->shouldReturn( false );
+	}
+
+	public function it_can_logout()
+	{
+		$this->init_mink( 'goutte' );
+
 		$this->login( 'admin', 'admin' )->shouldReturn( true );
-		$this->login( 'admin', 'xxxx' )->shouldReturn( false );
+		$this->is_logged_in()->shouldReturn( true );
+		$this->logout();
+		$this->is_logged_in()->shouldReturn( false );
+
+		$this->init_mink( 'selenium2' );
+
+		$this->login( 'admin', 'admin' )->shouldReturn( true );
+		$this->is_logged_in()->shouldReturn( true );
+		$this->logout();
+		$this->is_logged_in()->shouldReturn( false );
 	}
 
 	private function init_mink( $driver )

@@ -65,12 +65,14 @@ class WordPressContext extends RawWordPressContext
 		foreach ( $table->getHash() as $row ) {
 			if ( ! empty( $headers[ $row['header'] ] ) ) {
 				$value = $headers[ $row['header'] ][0];
-				$this->assertSame( $row['value'], $value, sprintf(
-					'The value of "%1$s" header is "%1$s", but it should be "%3$s".',
-					$row['header'],
-					$value,
-					$row['value']
-				) );
+				if ( $row['value'] !== $value ) {
+					throw new \Exception( sprintf(
+						'The value of "%1$s" header is "%1$s", but it should be "%3$s".',
+						$row['header'],
+						$value,
+						$row['value']
+					) );
+				}
 			} else {
 				throw new \Exception( sprintf(
 					'The value of "%1$s" header is empty, but it should be "%2$s".',
@@ -227,17 +229,20 @@ class WordPressContext extends RawWordPressContext
 	 * Example: Given the "twentysixteen" theme should be activated
 	 *
 	 * @Then /^the "(?P<theme>[^"]*)" theme should be activated$/
+	 * @throws \Exception
 	 */
 	public function theme_should_be_activated( $theme )
 	{
 		$theme = $this->replace_variables( $theme );
 		$current_theme = $this->get_current_theme();
 
-		$this->assertSame( $theme, $current_theme, sprintf(
-			"The current theme is %s, but it should be %s",
-			$current_theme,
-			$theme
-		) );
+		if ( $theme !== $current_theme ) {
+			throw new \Exception( sprintf(
+				"The current theme is %s, but it should be %s",
+				$current_theme,
+				$theme
+			) );
+		}
 	}
 
 	/**

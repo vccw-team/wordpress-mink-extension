@@ -400,44 +400,4 @@ class RawWordPressContext extends RawMinkContext
 		$params = $this->get_params();
 		return $params['admin_url'];
 	}
-
-	/**
-	 * Asserts that two variables have the same type and value.
-	 * Used on objects, it asserts that two variables reference
-	 * the same object.
-	 *
-	 * @param mixed  $expected
-	 * @param mixed  $actual
-	 * @param string $message
-	 */
-	protected function assertSame( $expected, $actual, $message = '' )
-	{
-		\PHPUnit_Framework_Assert::assertSame( $expected, $actual, $message = '' );
-	}
-
-	/**
-	 * Asserts that a condition is true.
-	 *
-	 * @param bool   $condition
-	 * @param string $message
-	 *
-	 * @throws \PHPUnit_Framework_AssertionFailedError
-	 */
-	protected function assertTrue( $condition, $message = '' )
-	{
-		\PHPUnit_Framework_Assert::assertTrue( $condition, $message = '' );
-	}
-
-	/**
-	 * Asserts that a condition is false.
-	 *
-	 * @param bool   $condition
-	 * @param string $message
-	 *
-	 * @throws \PHPUnit_Framework_AssertionFailedError
-	 */
-	protected function assertFalse( $condition, $message = '' )
-	{
-		\PHPUnit_Framework_Assert::assertFalse( $condition, $message = '' );
-	}
 }
