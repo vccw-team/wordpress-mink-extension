@@ -1,6 +1,6 @@
-# WordPress Extension for the Behat
+# WordPress Extension for the Behat/Mink
 
-[![Build Status](https://travis-ci.org/vccw-team/wordpress-extension.svg?branch=master)](https://travis-ci.org/vccw-team/wordpress-extension)
+[![Build Status](https://travis-ci.org/vccw-team/wordpress-mink-extension.svg?branch=master)](https://travis-ci.org/vccw-team/wordpress-mink-extension)
 [![Latest Stable Version](https://poser.pugx.org/vccw-team/wordpress-extension/v/stable)](https://packagist.org/packages/vccw-team/wordpress-extension)
 [![Total Downloads](https://poser.pugx.org/vccw-team/wordpress-extension/downloads)](https://packagist.org/packages/vccw-team/wordpress-extension)
 [![Latest Unstable Version](https://poser.pugx.org/vccw-team/wordpress-extension/v/unstable)](https://packagist.org/packages/vccw-team/wordpress-extension)
