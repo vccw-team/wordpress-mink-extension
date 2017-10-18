@@ -114,12 +114,19 @@ class RawWordPressContext extends RawMinkContext
 		$submit->click();
 
 		for ( $i = 0; $i < $this->timeout; $i++ ) {
+			// Check if keeping staying on login page till timeout.
 			try {
-				$admin_url = $this->get_admin_url() . '/';
-				if ( $this->is_current_url( $admin_url ) ) {
-					return true;
+				if ( $this->is_current_url( '/wp-login.php' ) ) {
+					// Still in login page.
+					if ( $this->getSession()->getPage()->find( 'css','#login_error' ) ) {
+						// Find error dialog. Apparent Error.
+						return false;
+					} else {
+						// @todo Should consider other situations?
+					}
 				} else {
-					return false;
+					// Redirected. Guess logged in.
+					return true;
 				}
 			} catch ( \Exception $e ) {
 				// do nothing
