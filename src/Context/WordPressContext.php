@@ -3,9 +3,11 @@
 namespace VCCW\Behat\Mink\WordPressExtension\Context;
 
 use Behat\Behat\Tester\Exception\PendingException;
-use Behat\Gherkin\Node\PyStringNode,
-		Behat\Gherkin\Node\TableNode;
+
+use Behat\Gherkin\Node\PyStringNode;
+use Behat\Gherkin\Node\TableNode;
 use Behat\Behat\Hook\Scope\AfterStepScope;
+
 
 /**
  * Features context.
@@ -28,16 +30,19 @@ class WordPressContext extends RawWordPressContext
 	 * Example: the HTTP status should be 400
 	 *
 	 * @param string $expect The HTTP status code.
+	 * @throws \Exception
 	 * @then /^the HTTP status should be (?P<expect>[0-9]+)$/
 	 */
 	public function the_http_status_should_be( $expect )
 	{
 		$status = $this->get_http_status();
-		$this->assertSame( $status, intval( $expect ), sprintf(
-			'The HTTP status is %1$s, but it should be %2$s',
-			$status,
-			$expect
-		) );
+		if ( intval( $expect ) !== $status ) {
+			throw new \Exception(sprintf(
+				'The HTTP status is %1$s, but it should be %2$s',
+				$status,
+				$expect
+			));
+		}
 	}
 
 	/**
@@ -60,12 +65,14 @@ class WordPressContext extends RawWordPressContext
 		foreach ( $table->getHash() as $row ) {
 			if ( ! empty( $headers[ $row['header'] ] ) ) {
 				$value = $headers[ $row['header'] ][0];
-				$this->assertSame( $row['value'], $value, sprintf(
-					'The value of "%1$s" header is "%1$s", but it should be "%3$s".',
-					$row['header'],
-					$value,
-					$row['value']
-				) );
+				if ( $row['value'] !== $value ) {
+					throw new \Exception( sprintf(
+						'The value of "%1$s" header is "%1$s", but it should be "%3$s".',
+						$row['header'],
+						$value,
+						$row['value']
+					) );
+				}
 			} else {
 				throw new \Exception( sprintf(
 					'The value of "%1$s" header is empty, but it should be "%2$s".',
@@ -89,20 +96,29 @@ class WordPressContext extends RawWordPressContext
 	 */
 	public function the_plugins_should_be( TableNode $table )
 	{
-		$plugins = $this->get_plugins();
-
 		foreach ( $table->getHash() as $row ) {
-			if ( ! empty( $plugins[ $row['slug'] ] ) ) {
-				$status = $plugins[ $row['slug'] ]['status'];
-				$this->assertSame( $row['status'], $status, sprintf(
-					"The %s plugin is installed, but it is not %s.",
-					$row['slug'],
-					$row['status']
-				) );
-			} else {
+			$slug = $row['slug'];
+			$expect = $row['status'];
+			if ( ! $this->is_plugin_installed( $slug ) ) {
 				throw new \Exception( sprintf(
 					"The %s plugin is not installed.",
-					$row['slug']
+					$slug
+				) );
+			}
+			if ( "active" === $expect && ! $this->is_plugin_activated( $slug ) ) {
+				throw new \Exception( sprintf(
+					"The %s plugin should be activated, but not activated.",
+					$slug
+				) );
+			} elseif ( "inactive" === $expect && $this->is_plugin_activated( $slug ) ) {
+				throw new \Exception( sprintf(
+					"The %s plugin should not be activated, but activated.",
+					$slug
+				) );
+			} elseif ( "active" !== $expect && "inactive" !== $expect ) {
+				throw new \Exception( sprintf(
+					"Incorrect status: %s",
+					$expect
 				) );
 			}
 		}
@@ -110,24 +126,22 @@ class WordPressContext extends RawWordPressContext
 
 	/**
 	 * Check status of plugins.
+	 * Example: Then "akismet" plugin should be activated
 	 *
 	 * @then /^the "(?P<slug>[^"]*)" plugin should be (?P<expect>(installed|activated))$/
 	 */
 	public function the_plugin_should_be( $slug, $expect )
 	{
-		$plugins = $this->get_plugins();
-
-		if ( empty( $plugins[ $slug ] ) ) {
+		if ( ! $this->is_plugin_installed( $slug ) ) {
 			throw new \Exception( sprintf(
 				"The %s plugin is not installed.",
 				$slug
 			) );
 		}
 
-		if ( "activated" === $expect ) {
-			$status = $plugins[ $slug ]['status'];
-			$this->assertSame( "active", $status, sprintf(
-				"The %s plugin is installed, but it is not activated.",
+		if ( "activated" === $expect && ! $this->is_plugin_activated( $slug ) ) {
+			throw new \Exception( sprintf(
+				"The %s plugin should be activated, but not activated.",
 				$slug
 			) );
 		}
@@ -135,23 +149,21 @@ class WordPressContext extends RawWordPressContext
 
 	/**
 	 * Check status of plugins.
+	 * Example: Then "akismet" plugin should not be activated
 	 *
 	 * @then /^the "(?P<slug>[^"]*)" plugin should not be (?P<expect>(installed|activated))$/
 	 */
 	public function the_plugin_should_not_be( $slug, $expect )
 	{
-		$plugins = $this->get_plugins();
-
-		if ( "installed" === $expect && ! empty( $plugins[ $slug ] ) ) {
+		if ( "installed" === $expect && $this->is_plugin_installed( $slug ) ) {
 			throw new \Exception( sprintf(
 				"The %s plugin should not be installed, but installed.",
 				$slug
 			) );
 		}
 
-		if ( "activated" === $expect ) {
-			$status = $plugins[ $slug ]['status'];
-			$this->assertTrue( ( "active" !== $status ), sprintf(
+		if ( "activated" === $expect && $this->is_plugin_activated( $slug ) ) {
+			throw new \Exception( sprintf(
 				"The %s plugin should not be activated, but activated.",
 				$slug
 			) );
@@ -159,21 +171,78 @@ class WordPressContext extends RawWordPressContext
 	}
 
 	/**
-	 * Check the theme is activated.
+	 * Activate plugin
+	 * Example: When I activate the "hello-dolly" plugin
+	 *
+	 * @when /^I activate the "(?P<slug>[^"]*)" plugin$/
+	 */
+	public function i_activate_the_plugin( $slug ) {
+		if ( ! $this->is_plugin_installed( $slug ) ) {
+			throw new \Exception( sprintf(
+				"The %s plugin is not installed.",
+				$slug
+			) );
+		}
+
+		if ( $this->is_plugin_activated( $slug ) ) {
+			$this->deactivate_plugin( $slug );
+		}
+
+		$this->activate_plugin( $slug );
+
+		if ( ! $this->is_plugin_activated( $slug ) ) {
+			throw new \Exception( sprintf(
+				"The %s plugin should be activated, but not activated.",
+				$slug
+			) );
+		}
+	}
+
+	/**
+	 * Deactivate plugin
+	 * Example: When I deactivate the "hello-dolly" plugin
+	 *
+	 * @then /^I deactivate the "(?P<slug>[^"]*)" plugin$/
+	 */
+	public function i_deactivate_the_plugin( $slug ) {
+		if ( ! $this->is_plugin_installed( $slug ) ) {
+			throw new \Exception( sprintf(
+				"The %s plugin is not installed.",
+				$slug
+			) );
+		}
+
+		if ( $this->is_plugin_activated( $slug ) ) {
+			$this->deactivate_plugin( $slug );
+		}
+
+		if ( $this->is_plugin_activated( $slug ) ) {
+			throw new \Exception( sprintf(
+				"The %s plugin should not be activated, but activated.",
+				$slug
+			) );
+		}
+	}
+
+	/**
+	 * Check the theme is activated
 	 * Example: Given the "twentysixteen" theme should be activated
 	 *
 	 * @Then /^the "(?P<theme>[^"]*)" theme should be activated$/
+	 * @throws \Exception
 	 */
 	public function theme_should_be_activated( $theme )
 	{
 		$theme = $this->replace_variables( $theme );
 		$current_theme = $this->get_current_theme();
 
-		$this->assertSame( $theme, $current_theme, sprintf(
-			"The current theme is %s, but it should be %s",
-			$current_theme,
-			$theme
-		) );
+		if ( $theme !== $current_theme ) {
+			throw new \Exception( sprintf(
+				"The current theme is %s, but it should be %s",
+				$current_theme,
+				$theme
+			) );
+		}
 	}
 
 	/**

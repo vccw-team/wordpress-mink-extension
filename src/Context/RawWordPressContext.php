@@ -64,7 +64,7 @@ class RawWordPressContext extends RawMinkContext
 	 *
 	 * @return int HTTP status code.
 	 */
-	protected function get_http_status()
+	public function get_http_status()
 	{
 		$session = $this->getSession();
 		return intval( $session->getStatusCode() );
@@ -75,7 +75,7 @@ class RawWordPressContext extends RawMinkContext
 	 *
 	 * @return array HTTP response headers.
 	 */
-	protected function get_http_headers()
+	public function get_http_headers()
 	{
 		$session = $this->getSession();
 		return $session->getResponseHeaders();
@@ -87,7 +87,7 @@ class RawWordPressContext extends RawMinkContext
 	 * @param string $url The URL.
 	 * @return string The contents.
 	 */
-	protected function get_contents( $url )
+	public function get_contents( $url )
 	{
 		$this->getSession()->visit( $url );
 		return $this->getSession()->getPage()->getText();
@@ -101,7 +101,7 @@ class RawWordPressContext extends RawMinkContext
 	 * @return bool
 	 * @throws \Exception If the page returns something wrong.
 	 */
-	protected function login( $user, $password )
+	public function login( $user, $password )
 	{
 		$this->getSession()->visit( $this->locatePath( '/wp-login.php' ) );
 		$this->wait_the_element( "#loginform" );
@@ -114,12 +114,19 @@ class RawWordPressContext extends RawMinkContext
 		$submit->click();
 
 		for ( $i = 0; $i < $this->timeout; $i++ ) {
+			// Check if keeping staying on login page till timeout.
 			try {
-				$admin_url = $this->get_admin_url() . '/';
-				if ( $this->is_current_url( $admin_url ) ) {
-					return true;
+				if ( $this->is_current_url( '/wp-login.php' ) ) {
+					// Still in login page.
+					if ( $this->getSession()->getPage()->find( 'css','#login_error' ) ) {
+						// Find error dialog. Apparent Error.
+						return false;
+					} else {
+						// @todo Should consider other situations?
+					}
 				} else {
-					return false;
+					// Redirected. Guess logged in.
+					return true;
 				}
 			} catch ( \Exception $e ) {
 				// do nothing
@@ -138,7 +145,7 @@ class RawWordPressContext extends RawMinkContext
 	 * @return bool Return true when I am at `$url`.
 	 * @throws \Exception If the page returns something wrong.
 	 */
-	protected function is_current_url( $url )
+	public function is_current_url( $url )
 	{
 		$current_url = $this->getSession()->getCurrentUrl();
 
@@ -156,10 +163,10 @@ class RawWordPressContext extends RawMinkContext
 	 * @return bool
 	 * @throws \Exception If the page returns something wrong.
 	 */
-	protected function logout()
+	public function logout()
 	{
 		if ( ! $this->is_logged_in() ) {
-			return; // user isn't login.
+			return false; // user isn't login.
 		}
 
 		$page = $this->getSession()->getPage();
@@ -191,7 +198,7 @@ class RawWordPressContext extends RawMinkContext
 	 * @return boolean
 	 *   Returns TRUE if a user is logged in for this session.
 	 */
-	protected function is_logged_in()
+	public function is_logged_in()
 	{
 		$page = $this->getSession()->getPage();
 		if ( $page->find( "css", ".logged-in" ) ) {
@@ -210,10 +217,9 @@ class RawWordPressContext extends RawMinkContext
 	 * @return bool
 	 * @throws \Exception If the page returns something wrong.
 	 */
-	protected function wait_the_element( $selector )
+	public function wait_the_element( $selector )
 	{
 		$page = $this->getSession()->getPage();
-		$element = $page->find( 'css', $selector );
 
 		for ( $i = 0; $i < $this->timeout; $i++ ) {
 			try {
@@ -232,41 +238,98 @@ class RawWordPressContext extends RawMinkContext
 	}
 
 	/**
-	 * Get the current theme
+	 * Check the plugin is activated.
 	 *
-	 * @return string The slug of the current theme.
+	 * @param string $slug The slug of the plugin.
+	 * @return bool Return true if plugin is activated.
 	 * @throws \Exception
 	 */
-	protected function get_plugins()
+	public function is_plugin_activated( $slug )
 	{
-		if ( ! $this->is_logged_in() ) {
-			throw new \Exception( "You are not logged in" );
+		$element = $this->search_plugin( $slug );
+		if ( ! $element ) {
+			throw new \Exception( sprintf(
+				"The %s plugin is not installed.",
+				$slug
+			) );
 		}
+		$classes = preg_split( '/\s+/', trim( $element->getAttribute( "class" ) ) );
+		if ( in_array( 'active', $classes ) ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
+	/**
+	 * Check the plugin is installed.
+	 *
+	 * @param string $slug The slug of the plugin.
+	 * @return bool Return true if plugin is installed.
+	 * @throws \Exception
+	 */
+	public function is_plugin_installed( $slug )
+	{
+		$element = $this->search_plugin( $slug );
+		if ( count( $element ) ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Activate the plugin.
+	 *
+	 * @param string $slug The slug of the plugin.
+	 * @throws \Exception
+	 */
+	public function activate_plugin( $slug )
+	{
+		$element = $this->search_plugin( $slug );
+		if ( ! $element ) {
+			throw new \Exception( sprintf(
+				"The %s plugin is not installed.",
+				$slug
+			) );
+		}
+		$edit = $element->find( 'css', '.activate a' );
+		$edit->click();
+		sleep( 1 );
+	}
+
+	/**
+	 * Deactivate the plugin.
+	 *
+	 * @param string $slug The slug of the plugin.
+	 * @throws \Exception
+	 */
+	public function deactivate_plugin( $slug )
+	{
+		$element = $this->search_plugin( $slug );
+		if ( ! $element ) {
+			throw new \Exception( sprintf(
+				"The %s plugin is not installed.",
+				$slug
+			) );
+		}
+		$edit = $element->find( 'css', '.deactivate a' );
+		$edit->click();
+		sleep( 1 );
+	}
+
+	/**
+	 * Search plugin in the plugins.php
+	 *
+	 * @param string $slug The slug of the plugin.
+	 * @return object An object of the dom element of plugin row.
+	 */
+	public function search_plugin( $slug )
+	{
 		$session = $this->getSession();
-		$session->visit( $this->locatePath( $this->get_admin_url() . '/plugins.php' ) );
-		$page = $session->getPage();
-		$e = $page->findAll( 'css', "#the-list tr" );
-		if ( ! count( $e ) ) {
-			throw new \Exception( "Maybe you don't have permission to get plugins." );
-		}
-
-		$plugins = array();
-		foreach ( $e as $plugin ) {
-			$slug = $plugin->getAttribute( "data-slug" );
-			$classes = preg_split( "/\s+/", $plugin->getAttribute( "class" ) );
-			if ( in_array( "active", $classes ) ) {
-				$status = "active";
-			} else {
-				$status = "inactive";
-			}
-
-			$plugins[ $slug ] = array(
-				"status" => $status,
-			);
-		}
-
-		return $plugins;
+		$path = $this->get_admin_url() . '/plugins.php?s=' . urlencode( $slug );
+		$session->visit( $this->locatePath( $path ) );
+		return $session->getPage()->find( 'css', 'tr[data-slug="' . $slug . '"]' );
 	}
 
 	/**
@@ -343,45 +406,5 @@ class RawWordPressContext extends RawMinkContext
 	{
 		$params = $this->get_params();
 		return $params['admin_url'];
-	}
-
-	/**
-	 * Asserts that two variables have the same type and value.
-	 * Used on objects, it asserts that two variables reference
-	 * the same object.
-	 *
-	 * @param mixed  $expected
-	 * @param mixed  $actual
-	 * @param string $message
-	 */
-	protected function assertSame( $expected, $actual, $message = '' )
-	{
-		\PHPUnit_Framework_Assert::assertSame( $expected, $actual, $message = '' );
-	}
-
-	/**
-	 * Asserts that a condition is true.
-	 *
-	 * @param bool   $condition
-	 * @param string $message
-	 *
-	 * @throws \PHPUnit_Framework_AssertionFailedError
-	 */
-	protected function assertTrue( $condition, $message = '' )
-	{
-		\PHPUnit_Framework_Assert::assertTrue( $condition, $message = '' );
-	}
-
-	/**
-	 * Asserts that a condition is false.
-	 *
-	 * @param bool   $condition
-	 * @param string $message
-	 *
-	 * @throws \PHPUnit_Framework_AssertionFailedError
-	 */
-	protected function assertFalse( $condition, $message = '' )
-	{
-		\PHPUnit_Framework_Assert::assertFalse( $condition, $message = '' );
 	}
 }
